@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package andean.xicoatl;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "andean/xicoatl/params.proto";
+import "andean/xicoatl/pool.proto";
+
+option go_package = "andean/x/xicoatl/types";
+
+// GenesisState defines the xicoatl module's genesis state.
+message GenesisState {
+  
+  // params defines all the parameters of the module.
+           Params params   = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  repeated Pool   poolList = 2 [(gogoproto.nullable) = false] ;
+}
+

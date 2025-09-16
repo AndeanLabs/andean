@@ -1,0 +1,14 @@
+syntax = "proto3";
+package andean.xicoatl;
+
+option go_package = "andean/x/xicoatl/types";
+
+message Pool {
+  string index = 1; 
+  string denomA = 2; 
+  uint64 amountA = 3; 
+  string denomB = 4; 
+  uint64 amountB = 5; 
+  string creator = 6;
+}
+

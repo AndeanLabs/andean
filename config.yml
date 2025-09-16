@@ -1,28 +1,38 @@
 version: 1
-validation: sovereign
-accounts: 
+accounts:
 - name: alice
   coins:
-  - 20000token
-  - 200000000stake
+  - 200000000uandean
+  - 100000000uusd
 - name: bob
   coins:
-  - 10000token
-  - 100000000stake
-client:
-  openapi:
-    path: docs/static/openapi.yml
+  - 100000000uandean
+  - 100000000uusd
 faucet:
   name: bob
   coins:
-  - 5token
-  - 100000stake
+  - 100000uandean
+  - 100000uusd
 validators:
 - name: alice
-  bonded: 100000000stake
-- name: validator1
-  bonded: 100000000stake
-- name: validator2
-  bonded: 200000000stake
-- name: validator3
-  bonded: 300000000stake
+  bonded: 100000000uandean
+genesis:
+  chain_id: andean-arabica-1
+  app_state:
+    staking:
+      params:
+        bond_denom: "uandean"
+    mint:
+      params:
+        mint_denom: "uandean"
+    crisis:
+      constant_fee:
+        denom: "uandean"
+    gov:
+      params:
+        min_deposit:
+        - denom: "uandean"
+          amount: "10000000"
+        expedited_min_deposit:
+        - denom: "uandean"
+          amount: "50000000"
