@@ -7,6 +7,10 @@ import (
 	_ "andean/x/xicoatl/module" // import for side-effects
 	xicoatlmoduletypes "andean/x/xicoatl/types"
 
+	itzelmodulev1 "andean/api/andean/itzel/module"
+	_ "andean/x/itzel/module" // import for side-effects
+	itzelmoduletypes "andean/x/itzel/types"
+
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
 	appv1alpha1 "cosmossdk.io/api/cosmos/app/v1alpha1"
 	authmodulev1 "cosmossdk.io/api/cosmos/auth/module/v1"
@@ -94,6 +98,7 @@ var (
 		circuittypes.ModuleName,
 		// chain modules
 		xicoatlmoduletypes.ModuleName,
+		itzelmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 
@@ -119,6 +124,7 @@ var (
 		ibcfeetypes.ModuleName,
 		// chain modules
 		xicoatlmoduletypes.ModuleName,
+		itzelmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	}
 
@@ -138,6 +144,7 @@ var (
 		ibcfeetypes.ModuleName,
 		// chain modules
 		xicoatlmoduletypes.ModuleName,
+		itzelmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	}
 
@@ -297,6 +304,10 @@ var (
 			{
 				Name:   xicoatlmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&xicoatlmodulev1.Module{}),
+			},
+			{
+				Name:   itzelmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&itzelmodulev1.Module{}),
 			},
 			// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},

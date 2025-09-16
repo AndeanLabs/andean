@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package andean.itzel;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "andean/itzel/params.proto";
+import "andean/itzel/price.proto";
+
+option go_package = "andean/x/itzel/types";
+
+// GenesisState defines the itzel module's genesis state.
+message GenesisState {
+  
+  // params defines all the parameters of the module.
+           Params params    = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  repeated Price  priceList = 2 [(gogoproto.nullable) = false] ;
+}
+

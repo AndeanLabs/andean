@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package andean.itzel;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "andean/itzel/params.proto";
+import "andean/itzel/price.proto";
+
+option go_package = "andean/x/itzel/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/andean/itzel/params";
+  
+  }
+  
+  // Queries a list of Price items.
+  rpc Price    (QueryGetPriceRequest) returns (QueryGetPriceResponse) {
+    option (google.api.http).get = "/andean/itzel/price/{source}";
+  
+  }
+  rpc PriceAll (QueryAllPriceRequest) returns (QueryAllPriceResponse) {
+    option (google.api.http).get = "/andean/itzel/price";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+message QueryGetPriceRequest {
+  string source = 1;
+}
+
+message QueryGetPriceResponse {
+  Price price = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllPriceRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPriceResponse {
+  repeated Price                                  price      = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+

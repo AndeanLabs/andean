@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	keepertest "andean/testutil/keeper"
+	"andean/testutil/sample"
 	"andean/x/xicoatl/keeper"
 	"andean/x/xicoatl/types"
 )
@@ -18,10 +19,15 @@ var _ = strconv.IntSize
 func TestPoolMsgServerCreate(t *testing.T) {
 	k, ctx := keepertest.XicoatlKeeper(t)
 	srv := keeper.NewMsgServerImpl(k)
-	creator := "A"
+	creator := sample.AccAddress()
 	for i := 0; i < 5; i++ {
-		expected := &types.MsgCreatePool{Creator: creator,
-			Index: strconv.Itoa(i),
+		expected := &types.MsgCreatePool{
+			Creator: creator,
+			Index:   strconv.Itoa(i),
+			DenomA:  "stake",
+			AmountA: 100,
+			DenomB:  "token",
+			AmountB: 100,
 		}
 		_, err := srv.CreatePool(ctx, expected)
 		require.NoError(t, err)
@@ -34,7 +40,7 @@ func TestPoolMsgServerCreate(t *testing.T) {
 }
 
 func TestPoolMsgServerUpdate(t *testing.T) {
-	creator := "A"
+	creator := sample.AccAddress()
 
 	tests := []struct {
 		desc    string
@@ -44,20 +50,32 @@ func TestPoolMsgServerUpdate(t *testing.T) {
 		{
 			desc: "Completed",
 			request: &types.MsgUpdatePool{Creator: creator,
-				Index: strconv.Itoa(0),
+				Index:   strconv.Itoa(0),
+				DenomA:  "stake",
+				AmountA: 100,
+				DenomB:  "token",
+				AmountB: 100,
 			},
 		},
 		{
 			desc: "Unauthorized",
-			request: &types.MsgUpdatePool{Creator: "B",
-				Index: strconv.Itoa(0),
+			request: &types.MsgUpdatePool{Creator: sample.AccAddress(),
+				Index:   strconv.Itoa(0),
+				DenomA:  "stake",
+				AmountA: 100,
+				DenomB:  "token",
+				AmountB: 100,
 			},
 			err: sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc: "KeyNotFound",
 			request: &types.MsgUpdatePool{Creator: creator,
-				Index: strconv.Itoa(100000),
+				Index:   strconv.Itoa(100000),
+				DenomA:  "stake",
+				AmountA: 100,
+				DenomB:  "token",
+				AmountB: 100,
 			},
 			err: sdkerrors.ErrKeyNotFound,
 		},
@@ -66,8 +84,13 @@ func TestPoolMsgServerUpdate(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			k, ctx := keepertest.XicoatlKeeper(t)
 			srv := keeper.NewMsgServerImpl(k)
-			expected := &types.MsgCreatePool{Creator: creator,
-				Index: strconv.Itoa(0),
+			expected := &types.MsgCreatePool{
+				Creator: creator,
+				Index:   strconv.Itoa(0),
+				DenomA:  "stake",
+				AmountA: 100,
+				DenomB:  "token",
+				AmountB: 100,
 			}
 			_, err := srv.CreatePool(ctx, expected)
 			require.NoError(t, err)
@@ -88,7 +111,7 @@ func TestPoolMsgServerUpdate(t *testing.T) {
 }
 
 func TestPoolMsgServerDelete(t *testing.T) {
-	creator := "A"
+	creator := sample.AccAddress()
 
 	tests := []struct {
 		desc    string
@@ -103,7 +126,7 @@ func TestPoolMsgServerDelete(t *testing.T) {
 		},
 		{
 			desc: "Unauthorized",
-			request: &types.MsgDeletePool{Creator: "B",
+			request: &types.MsgDeletePool{Creator: sample.AccAddress(),
 				Index: strconv.Itoa(0),
 			},
 			err: sdkerrors.ErrUnauthorized,
@@ -121,8 +144,13 @@ func TestPoolMsgServerDelete(t *testing.T) {
 			k, ctx := keepertest.XicoatlKeeper(t)
 			srv := keeper.NewMsgServerImpl(k)
 
-			_, err := srv.CreatePool(ctx, &types.MsgCreatePool{Creator: creator,
-				Index: strconv.Itoa(0),
+			_, err := srv.CreatePool(ctx, &types.MsgCreatePool{
+				Creator: creator,
+				Index:   strconv.Itoa(0),
+				DenomA:  "stake",
+				AmountA: 100,
+				DenomB:  "token",
+				AmountB: 100,
 			})
 			require.NoError(t, err)
 			_, err = srv.DeletePool(ctx, tc.request)

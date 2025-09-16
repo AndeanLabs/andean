@@ -75,7 +75,9 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
+	itzelmodulekeeper "andean/x/itzel/keeper"
 	xicoatlmodulekeeper "andean/x/xicoatl/keeper"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"andean/docs"
@@ -146,6 +148,7 @@ type App struct {
 	ScopedKeepers             map[string]capabilitykeeper.ScopedKeeper
 
 	XicoatlKeeper xicoatlmodulekeeper.Keeper
+	ItzelKeeper   itzelmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// simulation manager
@@ -250,6 +253,7 @@ func New(
 		&app.GroupKeeper,
 		&app.CircuitBreakerKeeper,
 		&app.XicoatlKeeper,
+		&app.ItzelKeeper,
 		// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	); err != nil {
 		panic(err)
