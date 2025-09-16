@@ -28,6 +28,28 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Shows a price",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "source"}},
 				},
+				{
+					RpcMethod: "PriceReportAll",
+					Use:       "list-price-report",
+					Short:     "List all price-report",
+				},
+				{
+					RpcMethod:      "PriceReport",
+					Use:            "show-price-report [id]",
+					Short:          "Shows a price-report",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "source"}, {ProtoField: "oracle"}},
+				},
+				{
+					RpcMethod: "AggregatedPriceAll",
+					Use:       "list-aggregated-price",
+					Short:     "List all aggregated-price",
+				},
+				{
+					RpcMethod:      "AggregatedPrice",
+					Use:            "show-aggregated-price [id]",
+					Short:          "Shows a aggregated-price",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "source"}},
+				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},
@@ -44,6 +66,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:            "submit-price [source] [price]",
 					Short:          "Send a submit-price tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "source"}, {ProtoField: "price"}},
+				},
+				{
+					RpcMethod:      "AggregatePrices",
+					Use:            "aggregate-prices [source]",
+					Short:          "Send a aggregate-prices tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "source"}},
 				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},

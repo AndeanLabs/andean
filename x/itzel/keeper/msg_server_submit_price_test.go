@@ -9,12 +9,14 @@ import (
 	"andean/testutil/sample"
 	"andean/x/itzel/keeper"
 	"andean/x/itzel/types"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func TestSubmitPrice(t *testing.T) {
-	k, ctx, authorizedOracle := keepertest.ItzelKeeper(t)
+	k, ctx, authorizedOracles := keepertest.ItzelKeeper(t, 1)
 	srv := keeper.NewMsgServerImpl(k)
+	authorizedOracle := authorizedOracles[0]
 	unauthorizedOracle := sample.AccAddress()
 
 	tests := []struct {
@@ -49,10 +51,10 @@ func TestSubmitPrice(t *testing.T) {
 				require.ErrorIs(t, err, tt.expectErr)
 			} else {
 				require.NoError(t, err)
-				// Check if the price was stored
-				price, found := k.GetPrice(ctx, tt.msg.Source)
+				// Check if the price report was stored
+				report, found := k.GetPriceReport(ctx, tt.msg.Source, tt.msg.Creator)
 				require.True(t, found)
-				require.Equal(t, tt.msg.Price, price.Value)
+				require.Equal(t, tt.msg.Price, report.Price)
 			}
 		})
 	}

@@ -31,6 +31,24 @@ func TestGenesisState_Validate(t *testing.T) {
 						Source: "1",
 					},
 				},
+				PriceReportList: []types.PriceReport{
+					{
+						Source: "0",
+						Oracle: "0",
+					},
+					{
+						Source: "1",
+						Oracle: "1",
+					},
+				},
+				AggregatedPriceList: []types.AggregatedPrice{
+					{
+						Source: "0",
+					},
+					{
+						Source: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -39,6 +57,36 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated price",
 			genState: &types.GenesisState{
 				PriceList: []types.Price{
+					{
+						Source: "0",
+					},
+					{
+						Source: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated priceReport",
+			genState: &types.GenesisState{
+				PriceReportList: []types.PriceReport{
+					{
+						Source: "0",
+						Oracle: "0",
+					},
+					{
+						Source: "0",
+						Oracle: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated aggregatedPrice",
+			genState: &types.GenesisState{
+				AggregatedPriceList: []types.AggregatedPrice{
 					{
 						Source: "0",
 					},

@@ -6,6 +6,8 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "andean/itzel/params.proto";
 import "andean/itzel/price.proto";
+import "andean/itzel/price_report.proto";
+import "andean/itzel/aggregated_price.proto";
 
 option go_package = "andean/x/itzel/types";
 
@@ -13,7 +15,9 @@ option go_package = "andean/x/itzel/types";
 message GenesisState {
   
   // params defines all the parameters of the module.
-           Params params    = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
-  repeated Price  priceList = 2 [(gogoproto.nullable) = false] ;
+           Params          params              = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  repeated Price           priceList           = 2 [(gogoproto.nullable) = false] ;
+  repeated PriceReport     priceReportList     = 3 [(gogoproto.nullable) = false] ;
+  repeated AggregatedPrice aggregatedPriceList = 4 [(gogoproto.nullable) = false] ;
 }
 

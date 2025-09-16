@@ -17,33 +17,36 @@ import (
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
-func TestPriceQuerySingle(t *testing.T) {
+func TestPriceReportQuerySingle(t *testing.T) {
 	keeper, ctx, _ := keepertest.ItzelKeeper(t, 1)
-	msgs := createNPrice(keeper, ctx, 2)
+	msgs := createNPriceReport(keeper, ctx, 2)
 	tests := []struct {
 		desc     string
-		request  *types.QueryGetPriceRequest
-		response *types.QueryGetPriceResponse
+		request  *types.QueryGetPriceReportRequest
+		response *types.QueryGetPriceReportResponse
 		err      error
 	}{
 		{
 			desc: "First",
-			request: &types.QueryGetPriceRequest{
+			request: &types.QueryGetPriceReportRequest{
 				Source: msgs[0].Source,
+				Oracle: msgs[0].Oracle,
 			},
-			response: &types.QueryGetPriceResponse{Price: msgs[0]},
+			response: &types.QueryGetPriceReportResponse{PriceReport: msgs[0]},
 		},
 		{
 			desc: "Second",
-			request: &types.QueryGetPriceRequest{
+			request: &types.QueryGetPriceReportRequest{
 				Source: msgs[1].Source,
+				Oracle: msgs[1].Oracle,
 			},
-			response: &types.QueryGetPriceResponse{Price: msgs[1]},
+			response: &types.QueryGetPriceReportResponse{PriceReport: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
-			request: &types.QueryGetPriceRequest{
+			request: &types.QueryGetPriceReportRequest{
 				Source: strconv.Itoa(100000),
+				Oracle: strconv.Itoa(100000),
 			},
 			err: status.Error(codes.NotFound, "not found"),
 		},
@@ -54,7 +57,7 @@ func TestPriceQuerySingle(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.Price(ctx, tc.request)
+			response, err := keeper.PriceReport(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -68,12 +71,12 @@ func TestPriceQuerySingle(t *testing.T) {
 	}
 }
 
-func TestPriceQueryPaginated(t *testing.T) {
+func TestPriceReportQueryPaginated(t *testing.T) {
 	keeper, ctx, _ := keepertest.ItzelKeeper(t, 1)
-	msgs := createNPrice(keeper, ctx, 5)
+	msgs := createNPriceReport(keeper, ctx, 5)
 
-	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllPriceRequest {
-		return &types.QueryAllPriceRequest{
+	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllPriceReportRequest {
+		return &types.QueryAllPriceReportRequest{
 			Pagination: &query.PageRequest{
 				Key:        next,
 				Offset:     offset,
@@ -85,12 +88,12 @@ func TestPriceQueryPaginated(t *testing.T) {
 	t.Run("ByOffset", func(t *testing.T) {
 		step := 2
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.PriceAll(ctx, request(nil, uint64(i), uint64(step), false))
+			resp, err := keeper.PriceReportAll(ctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
-			require.LessOrEqual(t, len(resp.Price), step)
+			require.LessOrEqual(t, len(resp.PriceReport), step)
 			require.Subset(t,
 				nullify.Fill(msgs),
-				nullify.Fill(resp.Price),
+				nullify.Fill(resp.PriceReport),
 			)
 		}
 	})
@@ -98,27 +101,27 @@ func TestPriceQueryPaginated(t *testing.T) {
 		step := 2
 		var next []byte
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.PriceAll(ctx, request(next, 0, uint64(step), false))
+			resp, err := keeper.PriceReportAll(ctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
-			require.LessOrEqual(t, len(resp.Price), step)
+			require.LessOrEqual(t, len(resp.PriceReport), step)
 			require.Subset(t,
 				nullify.Fill(msgs),
-				nullify.Fill(resp.Price),
+				nullify.Fill(resp.PriceReport),
 			)
 			next = resp.Pagination.NextKey
 		}
 	})
 	t.Run("Total", func(t *testing.T) {
-		resp, err := keeper.PriceAll(ctx, request(nil, 0, 0, true))
+		resp, err := keeper.PriceReportAll(ctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
 			nullify.Fill(msgs),
-			nullify.Fill(resp.Price),
+			nullify.Fill(resp.PriceReport),
 		)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
-		_, err := keeper.PriceAll(ctx, nil)
+		_, err := keeper.PriceReportAll(ctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }

@@ -16,22 +16,24 @@ import (
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
-func createNPrice(keeper keeper.Keeper, ctx context.Context, n int) []types.Price {
-	items := make([]types.Price, n)
+func createNPriceReport(keeper keeper.Keeper, ctx context.Context, n int) []types.PriceReport {
+	items := make([]types.PriceReport, n)
 	for i := range items {
 		items[i].Source = strconv.Itoa(i)
+		items[i].Oracle = strconv.Itoa(i)
 
-		keeper.SetPrice(ctx, items[i])
+		keeper.SetPriceReport(ctx, items[i])
 	}
 	return items
 }
 
-func TestPriceGet(t *testing.T) {
+func TestPriceReportGet(t *testing.T) {
 	keeper, ctx, _ := keepertest.ItzelKeeper(t, 1)
-	items := createNPrice(keeper, ctx, 10)
+	items := createNPriceReport(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetPrice(ctx,
+		rst, found := keeper.GetPriceReport(ctx,
 			item.Source,
+			item.Oracle,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -40,25 +42,27 @@ func TestPriceGet(t *testing.T) {
 		)
 	}
 }
-func TestPriceRemove(t *testing.T) {
+func TestPriceReportRemove(t *testing.T) {
 	keeper, ctx, _ := keepertest.ItzelKeeper(t, 1)
-	items := createNPrice(keeper, ctx, 10)
+	items := createNPriceReport(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemovePrice(ctx,
+		keeper.RemovePriceReport(ctx,
 			item.Source,
+			item.Oracle,
 		)
-		_, found := keeper.GetPrice(ctx,
+		_, found := keeper.GetPriceReport(ctx,
 			item.Source,
+			item.Oracle,
 		)
 		require.False(t, found)
 	}
 }
 
-func TestPriceGetAll(t *testing.T) {
+func TestPriceReportGetAll(t *testing.T) {
 	keeper, ctx, _ := keepertest.ItzelKeeper(t, 1)
-	items := createNPrice(keeper, ctx, 10)
+	items := createNPriceReport(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllPrice(ctx)),
+		nullify.Fill(keeper.GetAllPriceReport(ctx)),
 	)
 }

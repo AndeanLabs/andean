@@ -8,6 +8,8 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "andean/itzel/params.proto";
 import "andean/itzel/price.proto";
+import "andean/itzel/price_report.proto";
+import "andean/itzel/aggregated_price.proto";
 
 option go_package = "andean/x/itzel/types";
 
@@ -27,6 +29,26 @@ service Query {
   }
   rpc PriceAll (QueryAllPriceRequest) returns (QueryAllPriceResponse) {
     option (google.api.http).get = "/andean/itzel/price";
+  
+  }
+  
+  // Queries a list of PriceReport items.
+  rpc PriceReport    (QueryGetPriceReportRequest) returns (QueryGetPriceReportResponse) {
+    option (google.api.http).get = "/andean/itzel/price_report/{source}/{oracle}";
+  
+  }
+  rpc PriceReportAll (QueryAllPriceReportRequest) returns (QueryAllPriceReportResponse) {
+    option (google.api.http).get = "/andean/itzel/price_report";
+  
+  }
+  
+  // Queries a list of AggregatedPrice items.
+  rpc AggregatedPrice    (QueryGetAggregatedPriceRequest) returns (QueryGetAggregatedPriceResponse) {
+    option (google.api.http).get = "/andean/itzel/aggregated_price/{source}";
+  
+  }
+  rpc AggregatedPriceAll (QueryAllAggregatedPriceRequest) returns (QueryAllAggregatedPriceResponse) {
+    option (google.api.http).get = "/andean/itzel/aggregated_price";
   
   }
 }
@@ -55,5 +77,40 @@ message QueryAllPriceRequest {
 message QueryAllPriceResponse {
   repeated Price                                  price      = 1 [(gogoproto.nullable) = false];
            cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetPriceReportRequest {
+  string source = 1;
+  string oracle = 2;
+}
+
+message QueryGetPriceReportResponse {
+  PriceReport priceReport = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllPriceReportRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPriceReportResponse {
+  repeated PriceReport                            priceReport = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination  = 2;
+}
+
+message QueryGetAggregatedPriceRequest {
+  string source = 1;
+}
+
+message QueryGetAggregatedPriceResponse {
+  AggregatedPrice aggregatedPrice = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllAggregatedPriceRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllAggregatedPriceResponse {
+  repeated AggregatedPrice                        aggregatedPrice = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination      = 2;
 }
 

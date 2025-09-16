@@ -1,0 +1,12 @@
+syntax = "proto3";
+package andean.itzel;
+
+option go_package = "andean/x/itzel/types";
+
+message AggregatedPrice {
+  string source = 1; 
+  int32 price = 2; 
+  int32 timestamp = 3; 
+  
+}
+

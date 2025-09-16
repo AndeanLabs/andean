@@ -19,9 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Query_Params_FullMethodName   = "/andean.itzel.Query/Params"
-	Query_Price_FullMethodName    = "/andean.itzel.Query/Price"
-	Query_PriceAll_FullMethodName = "/andean.itzel.Query/PriceAll"
+	Query_Params_FullMethodName             = "/andean.itzel.Query/Params"
+	Query_Price_FullMethodName              = "/andean.itzel.Query/Price"
+	Query_PriceAll_FullMethodName           = "/andean.itzel.Query/PriceAll"
+	Query_PriceReport_FullMethodName        = "/andean.itzel.Query/PriceReport"
+	Query_PriceReportAll_FullMethodName     = "/andean.itzel.Query/PriceReportAll"
+	Query_AggregatedPrice_FullMethodName    = "/andean.itzel.Query/AggregatedPrice"
+	Query_AggregatedPriceAll_FullMethodName = "/andean.itzel.Query/AggregatedPriceAll"
 )
 
 // QueryClient is the client API for Query service.
@@ -33,6 +37,12 @@ type QueryClient interface {
 	// Queries a list of Price items.
 	Price(ctx context.Context, in *QueryGetPriceRequest, opts ...grpc.CallOption) (*QueryGetPriceResponse, error)
 	PriceAll(ctx context.Context, in *QueryAllPriceRequest, opts ...grpc.CallOption) (*QueryAllPriceResponse, error)
+	// Queries a list of PriceReport items.
+	PriceReport(ctx context.Context, in *QueryGetPriceReportRequest, opts ...grpc.CallOption) (*QueryGetPriceReportResponse, error)
+	PriceReportAll(ctx context.Context, in *QueryAllPriceReportRequest, opts ...grpc.CallOption) (*QueryAllPriceReportResponse, error)
+	// Queries a list of AggregatedPrice items.
+	AggregatedPrice(ctx context.Context, in *QueryGetAggregatedPriceRequest, opts ...grpc.CallOption) (*QueryGetAggregatedPriceResponse, error)
+	AggregatedPriceAll(ctx context.Context, in *QueryAllAggregatedPriceRequest, opts ...grpc.CallOption) (*QueryAllAggregatedPriceResponse, error)
 }
 
 type queryClient struct {
@@ -70,6 +80,42 @@ func (c *queryClient) PriceAll(ctx context.Context, in *QueryAllPriceRequest, op
 	return out, nil
 }
 
+func (c *queryClient) PriceReport(ctx context.Context, in *QueryGetPriceReportRequest, opts ...grpc.CallOption) (*QueryGetPriceReportResponse, error) {
+	out := new(QueryGetPriceReportResponse)
+	err := c.cc.Invoke(ctx, Query_PriceReport_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PriceReportAll(ctx context.Context, in *QueryAllPriceReportRequest, opts ...grpc.CallOption) (*QueryAllPriceReportResponse, error) {
+	out := new(QueryAllPriceReportResponse)
+	err := c.cc.Invoke(ctx, Query_PriceReportAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) AggregatedPrice(ctx context.Context, in *QueryGetAggregatedPriceRequest, opts ...grpc.CallOption) (*QueryGetAggregatedPriceResponse, error) {
+	out := new(QueryGetAggregatedPriceResponse)
+	err := c.cc.Invoke(ctx, Query_AggregatedPrice_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) AggregatedPriceAll(ctx context.Context, in *QueryAllAggregatedPriceRequest, opts ...grpc.CallOption) (*QueryAllAggregatedPriceResponse, error) {
+	out := new(QueryAllAggregatedPriceResponse)
+	err := c.cc.Invoke(ctx, Query_AggregatedPriceAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility
@@ -79,6 +125,12 @@ type QueryServer interface {
 	// Queries a list of Price items.
 	Price(context.Context, *QueryGetPriceRequest) (*QueryGetPriceResponse, error)
 	PriceAll(context.Context, *QueryAllPriceRequest) (*QueryAllPriceResponse, error)
+	// Queries a list of PriceReport items.
+	PriceReport(context.Context, *QueryGetPriceReportRequest) (*QueryGetPriceReportResponse, error)
+	PriceReportAll(context.Context, *QueryAllPriceReportRequest) (*QueryAllPriceReportResponse, error)
+	// Queries a list of AggregatedPrice items.
+	AggregatedPrice(context.Context, *QueryGetAggregatedPriceRequest) (*QueryGetAggregatedPriceResponse, error)
+	AggregatedPriceAll(context.Context, *QueryAllAggregatedPriceRequest) (*QueryAllAggregatedPriceResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -94,6 +146,18 @@ func (UnimplementedQueryServer) Price(context.Context, *QueryGetPriceRequest) (*
 }
 func (UnimplementedQueryServer) PriceAll(context.Context, *QueryAllPriceRequest) (*QueryAllPriceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PriceAll not implemented")
+}
+func (UnimplementedQueryServer) PriceReport(context.Context, *QueryGetPriceReportRequest) (*QueryGetPriceReportResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PriceReport not implemented")
+}
+func (UnimplementedQueryServer) PriceReportAll(context.Context, *QueryAllPriceReportRequest) (*QueryAllPriceReportResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PriceReportAll not implemented")
+}
+func (UnimplementedQueryServer) AggregatedPrice(context.Context, *QueryGetAggregatedPriceRequest) (*QueryGetAggregatedPriceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AggregatedPrice not implemented")
+}
+func (UnimplementedQueryServer) AggregatedPriceAll(context.Context, *QueryAllAggregatedPriceRequest) (*QueryAllAggregatedPriceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AggregatedPriceAll not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 
@@ -162,6 +226,78 @@ func _Query_PriceAll_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_PriceReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetPriceReportRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PriceReport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_PriceReport_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PriceReport(ctx, req.(*QueryGetPriceReportRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PriceReportAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllPriceReportRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PriceReportAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_PriceReportAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PriceReportAll(ctx, req.(*QueryAllPriceReportRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_AggregatedPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetAggregatedPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).AggregatedPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_AggregatedPrice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).AggregatedPrice(ctx, req.(*QueryGetAggregatedPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_AggregatedPriceAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllAggregatedPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).AggregatedPriceAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_AggregatedPriceAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).AggregatedPriceAll(ctx, req.(*QueryAllAggregatedPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -180,6 +316,22 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PriceAll",
 			Handler:    _Query_PriceAll_Handler,
+		},
+		{
+			MethodName: "PriceReport",
+			Handler:    _Query_PriceReport_Handler,
+		},
+		{
+			MethodName: "PriceReportAll",
+			Handler:    _Query_PriceReportAll_Handler,
+		},
+		{
+			MethodName: "AggregatedPrice",
+			Handler:    _Query_AggregatedPrice_Handler,
+		},
+		{
+			MethodName: "AggregatedPriceAll",
+			Handler:    _Query_AggregatedPriceAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

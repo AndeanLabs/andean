@@ -16,21 +16,21 @@ import (
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
-func createNPrice(keeper keeper.Keeper, ctx context.Context, n int) []types.Price {
-	items := make([]types.Price, n)
+func createNAggregatedPrice(keeper keeper.Keeper, ctx context.Context, n int) []types.AggregatedPrice {
+	items := make([]types.AggregatedPrice, n)
 	for i := range items {
 		items[i].Source = strconv.Itoa(i)
 
-		keeper.SetPrice(ctx, items[i])
+		keeper.SetAggregatedPrice(ctx, items[i])
 	}
 	return items
 }
 
-func TestPriceGet(t *testing.T) {
+func TestAggregatedPriceGet(t *testing.T) {
 	keeper, ctx, _ := keepertest.ItzelKeeper(t, 1)
-	items := createNPrice(keeper, ctx, 10)
+	items := createNAggregatedPrice(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetPrice(ctx,
+		rst, found := keeper.GetAggregatedPrice(ctx,
 			item.Source,
 		)
 		require.True(t, found)
@@ -40,25 +40,25 @@ func TestPriceGet(t *testing.T) {
 		)
 	}
 }
-func TestPriceRemove(t *testing.T) {
+func TestAggregatedPriceRemove(t *testing.T) {
 	keeper, ctx, _ := keepertest.ItzelKeeper(t, 1)
-	items := createNPrice(keeper, ctx, 10)
+	items := createNAggregatedPrice(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemovePrice(ctx,
+		keeper.RemoveAggregatedPrice(ctx,
 			item.Source,
 		)
-		_, found := keeper.GetPrice(ctx,
+		_, found := keeper.GetAggregatedPrice(ctx,
 			item.Source,
 		)
 		require.False(t, found)
 	}
 }
 
-func TestPriceGetAll(t *testing.T) {
+func TestAggregatedPriceGetAll(t *testing.T) {
 	keeper, ctx, _ := keepertest.ItzelKeeper(t, 1)
-	items := createNPrice(keeper, ctx, 10)
+	items := createNAggregatedPrice(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllPrice(ctx)),
+		nullify.Fill(keeper.GetAllAggregatedPrice(ctx)),
 	)
 }

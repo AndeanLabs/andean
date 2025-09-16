@@ -1,0 +1,13 @@
+syntax = "proto3";
+package andean.itzel;
+
+option go_package = "andean/x/itzel/types";
+
+message PriceReport {
+  string source = 1; 
+  string oracle = 2; 
+  int32 price = 3; 
+  int32 timestamp = 4; 
+  
+}
+

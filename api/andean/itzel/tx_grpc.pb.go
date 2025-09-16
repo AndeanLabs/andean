@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Msg_UpdateParams_FullMethodName = "/andean.itzel.Msg/UpdateParams"
-	Msg_SubmitPrice_FullMethodName  = "/andean.itzel.Msg/SubmitPrice"
+	Msg_UpdateParams_FullMethodName    = "/andean.itzel.Msg/UpdateParams"
+	Msg_SubmitPrice_FullMethodName     = "/andean.itzel.Msg/SubmitPrice"
+	Msg_AggregatePrices_FullMethodName = "/andean.itzel.Msg/AggregatePrices"
 )
 
 // MsgClient is the client API for Msg service.
@@ -31,6 +32,7 @@ type MsgClient interface {
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 	SubmitPrice(ctx context.Context, in *MsgSubmitPrice, opts ...grpc.CallOption) (*MsgSubmitPriceResponse, error)
+	AggregatePrices(ctx context.Context, in *MsgAggregatePrices, opts ...grpc.CallOption) (*MsgAggregatePricesResponse, error)
 }
 
 type msgClient struct {
@@ -59,6 +61,15 @@ func (c *msgClient) SubmitPrice(ctx context.Context, in *MsgSubmitPrice, opts ..
 	return out, nil
 }
 
+func (c *msgClient) AggregatePrices(ctx context.Context, in *MsgAggregatePrices, opts ...grpc.CallOption) (*MsgAggregatePricesResponse, error) {
+	out := new(MsgAggregatePricesResponse)
+	err := c.cc.Invoke(ctx, Msg_AggregatePrices_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -67,6 +78,7 @@ type MsgServer interface {
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	SubmitPrice(context.Context, *MsgSubmitPrice) (*MsgSubmitPriceResponse, error)
+	AggregatePrices(context.Context, *MsgAggregatePrices) (*MsgAggregatePricesResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -79,6 +91,9 @@ func (UnimplementedMsgServer) UpdateParams(context.Context, *MsgUpdateParams) (*
 }
 func (UnimplementedMsgServer) SubmitPrice(context.Context, *MsgSubmitPrice) (*MsgSubmitPriceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitPrice not implemented")
+}
+func (UnimplementedMsgServer) AggregatePrices(context.Context, *MsgAggregatePrices) (*MsgAggregatePricesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AggregatePrices not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -129,6 +144,24 @@ func _Msg_SubmitPrice_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_AggregatePrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAggregatePrices)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AggregatePrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_AggregatePrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AggregatePrices(ctx, req.(*MsgAggregatePrices))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -143,6 +176,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubmitPrice",
 			Handler:    _Msg_SubmitPrice_Handler,
+		},
+		{
+			MethodName: "AggregatePrices",
+			Handler:    _Msg_AggregatePrices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -65,10 +65,114 @@ func (x *_GenesisState_2_list) IsValid() bool {
 	return x.list != nil
 }
 
+var _ protoreflect.List = (*_GenesisState_3_list)(nil)
+
+type _GenesisState_3_list struct {
+	list *[]*PriceReport
+}
+
+func (x *_GenesisState_3_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_3_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_3_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*PriceReport)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_3_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*PriceReport)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_3_list) AppendMutable() protoreflect.Value {
+	v := new(PriceReport)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_3_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_3_list) NewElement() protoreflect.Value {
+	v := new(PriceReport)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_3_list) IsValid() bool {
+	return x.list != nil
+}
+
+var _ protoreflect.List = (*_GenesisState_4_list)(nil)
+
+type _GenesisState_4_list struct {
+	list *[]*AggregatedPrice
+}
+
+func (x *_GenesisState_4_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_4_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_4_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*AggregatedPrice)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_4_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*AggregatedPrice)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_4_list) AppendMutable() protoreflect.Value {
+	v := new(AggregatedPrice)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_4_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_4_list) NewElement() protoreflect.Value {
+	v := new(AggregatedPrice)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_4_list) IsValid() bool {
+	return x.list != nil
+}
+
 var (
-	md_GenesisState           protoreflect.MessageDescriptor
-	fd_GenesisState_params    protoreflect.FieldDescriptor
-	fd_GenesisState_priceList protoreflect.FieldDescriptor
+	md_GenesisState                     protoreflect.MessageDescriptor
+	fd_GenesisState_params              protoreflect.FieldDescriptor
+	fd_GenesisState_priceList           protoreflect.FieldDescriptor
+	fd_GenesisState_priceReportList     protoreflect.FieldDescriptor
+	fd_GenesisState_aggregatedPriceList protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -76,6 +180,8 @@ func init() {
 	md_GenesisState = File_andean_itzel_genesis_proto.Messages().ByName("GenesisState")
 	fd_GenesisState_params = md_GenesisState.Fields().ByName("params")
 	fd_GenesisState_priceList = md_GenesisState.Fields().ByName("priceList")
+	fd_GenesisState_priceReportList = md_GenesisState.Fields().ByName("priceReportList")
+	fd_GenesisState_aggregatedPriceList = md_GenesisState.Fields().ByName("aggregatedPriceList")
 }
 
 var _ protoreflect.Message = (*fastReflection_GenesisState)(nil)
@@ -155,6 +261,18 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 			return
 		}
 	}
+	if len(x.PriceReportList) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_3_list{list: &x.PriceReportList})
+		if !f(fd_GenesisState_priceReportList, value) {
+			return
+		}
+	}
+	if len(x.AggregatedPriceList) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_4_list{list: &x.AggregatedPriceList})
+		if !f(fd_GenesisState_aggregatedPriceList, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -174,6 +292,10 @@ func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool 
 		return x.Params != nil
 	case "andean.itzel.GenesisState.priceList":
 		return len(x.PriceList) != 0
+	case "andean.itzel.GenesisState.priceReportList":
+		return len(x.PriceReportList) != 0
+	case "andean.itzel.GenesisState.aggregatedPriceList":
+		return len(x.AggregatedPriceList) != 0
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: andean.itzel.GenesisState"))
@@ -194,6 +316,10 @@ func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 		x.Params = nil
 	case "andean.itzel.GenesisState.priceList":
 		x.PriceList = nil
+	case "andean.itzel.GenesisState.priceReportList":
+		x.PriceReportList = nil
+	case "andean.itzel.GenesisState.aggregatedPriceList":
+		x.AggregatedPriceList = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: andean.itzel.GenesisState"))
@@ -218,6 +344,18 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 			return protoreflect.ValueOfList(&_GenesisState_2_list{})
 		}
 		listValue := &_GenesisState_2_list{list: &x.PriceList}
+		return protoreflect.ValueOfList(listValue)
+	case "andean.itzel.GenesisState.priceReportList":
+		if len(x.PriceReportList) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_3_list{})
+		}
+		listValue := &_GenesisState_3_list{list: &x.PriceReportList}
+		return protoreflect.ValueOfList(listValue)
+	case "andean.itzel.GenesisState.aggregatedPriceList":
+		if len(x.AggregatedPriceList) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_4_list{})
+		}
+		listValue := &_GenesisState_4_list{list: &x.AggregatedPriceList}
 		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
@@ -245,6 +383,14 @@ func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value
 		lv := value.List()
 		clv := lv.(*_GenesisState_2_list)
 		x.PriceList = *clv.list
+	case "andean.itzel.GenesisState.priceReportList":
+		lv := value.List()
+		clv := lv.(*_GenesisState_3_list)
+		x.PriceReportList = *clv.list
+	case "andean.itzel.GenesisState.aggregatedPriceList":
+		lv := value.List()
+		clv := lv.(*_GenesisState_4_list)
+		x.AggregatedPriceList = *clv.list
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: andean.itzel.GenesisState"))
@@ -276,6 +422,18 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 		}
 		value := &_GenesisState_2_list{list: &x.PriceList}
 		return protoreflect.ValueOfList(value)
+	case "andean.itzel.GenesisState.priceReportList":
+		if x.PriceReportList == nil {
+			x.PriceReportList = []*PriceReport{}
+		}
+		value := &_GenesisState_3_list{list: &x.PriceReportList}
+		return protoreflect.ValueOfList(value)
+	case "andean.itzel.GenesisState.aggregatedPriceList":
+		if x.AggregatedPriceList == nil {
+			x.AggregatedPriceList = []*AggregatedPrice{}
+		}
+		value := &_GenesisState_4_list{list: &x.AggregatedPriceList}
+		return protoreflect.ValueOfList(value)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: andean.itzel.GenesisState"))
@@ -295,6 +453,12 @@ func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) 
 	case "andean.itzel.GenesisState.priceList":
 		list := []*Price{}
 		return protoreflect.ValueOfList(&_GenesisState_2_list{list: &list})
+	case "andean.itzel.GenesisState.priceReportList":
+		list := []*PriceReport{}
+		return protoreflect.ValueOfList(&_GenesisState_3_list{list: &list})
+	case "andean.itzel.GenesisState.aggregatedPriceList":
+		list := []*AggregatedPrice{}
+		return protoreflect.ValueOfList(&_GenesisState_4_list{list: &list})
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: andean.itzel.GenesisState"))
@@ -374,6 +538,18 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				n += 1 + l + runtime.Sov(uint64(l))
 			}
 		}
+		if len(x.PriceReportList) > 0 {
+			for _, e := range x.PriceReportList {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if len(x.AggregatedPriceList) > 0 {
+			for _, e := range x.AggregatedPriceList {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -402,6 +578,38 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.AggregatedPriceList) > 0 {
+			for iNdEx := len(x.AggregatedPriceList) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.AggregatedPriceList[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x22
+			}
+		}
+		if len(x.PriceReportList) > 0 {
+			for iNdEx := len(x.PriceReportList) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.PriceReportList[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x1a
+			}
 		}
 		if len(x.PriceList) > 0 {
 			for iNdEx := len(x.PriceList) - 1; iNdEx >= 0; iNdEx-- {
@@ -552,6 +760,74 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field PriceReportList", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.PriceReportList = append(x.PriceReportList, &PriceReport{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.PriceReportList[len(x.PriceReportList)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AggregatedPriceList", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.AggregatedPriceList = append(x.AggregatedPriceList, &AggregatedPrice{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.AggregatedPriceList[len(x.AggregatedPriceList)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -607,8 +883,10 @@ type GenesisState struct {
 	unknownFields protoimpl.UnknownFields
 
 	// params defines all the parameters of the module.
-	Params    *Params  `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
-	PriceList []*Price `protobuf:"bytes,2,rep,name=priceList,proto3" json:"priceList,omitempty"`
+	Params              *Params            `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
+	PriceList           []*Price           `protobuf:"bytes,2,rep,name=priceList,proto3" json:"priceList,omitempty"`
+	PriceReportList     []*PriceReport     `protobuf:"bytes,3,rep,name=priceReportList,proto3" json:"priceReportList,omitempty"`
+	AggregatedPriceList []*AggregatedPrice `protobuf:"bytes,4,rep,name=aggregatedPriceList,proto3" json:"aggregatedPriceList,omitempty"`
 }
 
 func (x *GenesisState) Reset() {
@@ -645,6 +923,20 @@ func (x *GenesisState) GetPriceList() []*Price {
 	return nil
 }
 
+func (x *GenesisState) GetPriceReportList() []*PriceReport {
+	if x != nil {
+		return x.PriceReportList
+	}
+	return nil
+}
+
+func (x *GenesisState) GetAggregatedPriceList() []*AggregatedPrice {
+	if x != nil {
+		return x.AggregatedPriceList
+	}
+	return nil
+}
+
 var File_andean_itzel_genesis_proto protoreflect.FileDescriptor
 
 var file_andean_itzel_genesis_proto_rawDesc = []byte{
@@ -656,24 +948,39 @@ var file_andean_itzel_genesis_proto_rawDesc = []byte{
 	0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x2f, 0x69, 0x74, 0x7a, 0x65,
 	0x6c, 0x2f, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x18,
 	0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x2f, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x2f, 0x70, 0x72, 0x69,
-	0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x80, 0x01, 0x0a, 0x0c, 0x47, 0x65, 0x6e,
-	0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x37, 0x0a, 0x06, 0x70, 0x61, 0x72,
-	0x61, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x61, 0x6e, 0x64, 0x65,
-	0x61, 0x6e, 0x2e, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42,
-	0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x06, 0x70, 0x61, 0x72, 0x61,
-	0x6d, 0x73, 0x12, 0x37, 0x0a, 0x09, 0x70, 0x72, 0x69, 0x63, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x18,
-	0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x2e, 0x69,
-	0x74, 0x7a, 0x65, 0x6c, 0x2e, 0x50, 0x72, 0x69, 0x63, 0x65, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00,
-	0x52, 0x09, 0x70, 0x72, 0x69, 0x63, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x8a, 0x01, 0x0a, 0x10,
-	0x63, 0x6f, 0x6d, 0x2e, 0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x2e, 0x69, 0x74, 0x7a, 0x65, 0x6c,
-	0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
-	0x5a, 0x17, 0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x61, 0x6e, 0x64,
-	0x65, 0x61, 0x6e, 0x2f, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0xa2, 0x02, 0x03, 0x41, 0x49, 0x58, 0xaa,
-	0x02, 0x0c, 0x41, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x2e, 0x49, 0x74, 0x7a, 0x65, 0x6c, 0xca, 0x02,
-	0x0c, 0x41, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x5c, 0x49, 0x74, 0x7a, 0x65, 0x6c, 0xe2, 0x02, 0x18,
-	0x41, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x5c, 0x49, 0x74, 0x7a, 0x65, 0x6c, 0x5c, 0x47, 0x50, 0x42,
-	0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0d, 0x41, 0x6e, 0x64, 0x65, 0x61,
-	0x6e, 0x3a, 0x3a, 0x49, 0x74, 0x7a, 0x65, 0x6c, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1f, 0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e,
+	0x2f, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x2f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x5f, 0x72, 0x65, 0x70,
+	0x6f, 0x72, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x23, 0x61, 0x6e, 0x64, 0x65, 0x61,
+	0x6e, 0x2f, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x2f, 0x61, 0x67, 0x67, 0x72, 0x65, 0x67, 0x61, 0x74,
+	0x65, 0x64, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa2,
+	0x02, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12,
+	0x37, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x14, 0x2e, 0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x2e, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x2e, 0x50,
+	0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01,
+	0x52, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x37, 0x0a, 0x09, 0x70, 0x72, 0x69, 0x63,
+	0x65, 0x4c, 0x69, 0x73, 0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x61, 0x6e,
+	0x64, 0x65, 0x61, 0x6e, 0x2e, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x2e, 0x50, 0x72, 0x69, 0x63, 0x65,
+	0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x09, 0x70, 0x72, 0x69, 0x63, 0x65, 0x4c, 0x69, 0x73,
+	0x74, 0x12, 0x49, 0x0a, 0x0f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x52, 0x65, 0x70, 0x6f, 0x72, 0x74,
+	0x4c, 0x69, 0x73, 0x74, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x61, 0x6e, 0x64,
+	0x65, 0x61, 0x6e, 0x2e, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x2e, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52,
+	0x65, 0x70, 0x6f, 0x72, 0x74, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x0f, 0x70, 0x72, 0x69,
+	0x63, 0x65, 0x52, 0x65, 0x70, 0x6f, 0x72, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x55, 0x0a, 0x13,
+	0x61, 0x67, 0x67, 0x72, 0x65, 0x67, 0x61, 0x74, 0x65, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x4c,
+	0x69, 0x73, 0x74, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x61, 0x6e, 0x64, 0x65,
+	0x61, 0x6e, 0x2e, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x2e, 0x41, 0x67, 0x67, 0x72, 0x65, 0x67, 0x61,
+	0x74, 0x65, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x13,
+	0x61, 0x67, 0x67, 0x72, 0x65, 0x67, 0x61, 0x74, 0x65, 0x64, 0x50, 0x72, 0x69, 0x63, 0x65, 0x4c,
+	0x69, 0x73, 0x74, 0x42, 0x8a, 0x01, 0x0a, 0x10, 0x63, 0x6f, 0x6d, 0x2e, 0x61, 0x6e, 0x64, 0x65,
+	0x61, 0x6e, 0x2e, 0x69, 0x74, 0x7a, 0x65, 0x6c, 0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69,
+	0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x17, 0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e,
+	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x61, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x2f, 0x69, 0x74, 0x7a, 0x65,
+	0x6c, 0xa2, 0x02, 0x03, 0x41, 0x49, 0x58, 0xaa, 0x02, 0x0c, 0x41, 0x6e, 0x64, 0x65, 0x61, 0x6e,
+	0x2e, 0x49, 0x74, 0x7a, 0x65, 0x6c, 0xca, 0x02, 0x0c, 0x41, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x5c,
+	0x49, 0x74, 0x7a, 0x65, 0x6c, 0xe2, 0x02, 0x18, 0x41, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x5c, 0x49,
+	0x74, 0x7a, 0x65, 0x6c, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61,
+	0xea, 0x02, 0x0d, 0x41, 0x6e, 0x64, 0x65, 0x61, 0x6e, 0x3a, 0x3a, 0x49, 0x74, 0x7a, 0x65, 0x6c,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -690,18 +997,22 @@ func file_andean_itzel_genesis_proto_rawDescGZIP() []byte {
 
 var file_andean_itzel_genesis_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_andean_itzel_genesis_proto_goTypes = []interface{}{
-	(*GenesisState)(nil), // 0: andean.itzel.GenesisState
-	(*Params)(nil),       // 1: andean.itzel.Params
-	(*Price)(nil),        // 2: andean.itzel.Price
+	(*GenesisState)(nil),    // 0: andean.itzel.GenesisState
+	(*Params)(nil),          // 1: andean.itzel.Params
+	(*Price)(nil),           // 2: andean.itzel.Price
+	(*PriceReport)(nil),     // 3: andean.itzel.PriceReport
+	(*AggregatedPrice)(nil), // 4: andean.itzel.AggregatedPrice
 }
 var file_andean_itzel_genesis_proto_depIdxs = []int32{
 	1, // 0: andean.itzel.GenesisState.params:type_name -> andean.itzel.Params
 	2, // 1: andean.itzel.GenesisState.priceList:type_name -> andean.itzel.Price
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	3, // 2: andean.itzel.GenesisState.priceReportList:type_name -> andean.itzel.PriceReport
+	4, // 3: andean.itzel.GenesisState.aggregatedPriceList:type_name -> andean.itzel.AggregatedPrice
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_andean_itzel_genesis_proto_init() }
@@ -711,6 +1022,8 @@ func file_andean_itzel_genesis_proto_init() {
 	}
 	file_andean_itzel_params_proto_init()
 	file_andean_itzel_price_proto_init()
+	file_andean_itzel_price_report_proto_init()
+	file_andean_itzel_aggregated_price_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_andean_itzel_genesis_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GenesisState); i {

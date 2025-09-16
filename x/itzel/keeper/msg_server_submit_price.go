@@ -28,13 +28,14 @@ func (k msgServer) SubmitPrice(goCtx context.Context, msg *types.MsgSubmitPrice)
 		return nil, errors.Wrap(sdkerrors.ErrUnauthorized, "sender is not an authorized oracle")
 	}
 
-	price := types.Price{
+	report := types.PriceReport{
 		Source:    msg.Source,
-		Value:     msg.Price,
+		Oracle:    msg.Creator,
+		Price:     msg.Price,
 		Timestamp: int32(ctx.BlockTime().Unix()),
 	}
 
-	k.SetPrice(ctx, price)
+	k.SetPriceReport(ctx, report)
 
 	return &types.MsgSubmitPriceResponse{}, nil
 }

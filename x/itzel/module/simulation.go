@@ -27,6 +27,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgSubmitPrice int = 100
 
+	opWeightMsgAggregatePrices = "op_weight_msg_aggregate_prices"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgAggregatePrices int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -61,6 +65,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		itzelsimulation.SimulateMsgSubmitPrice(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgAggregatePrices int
+	simState.AppParams.GetOrGenerate(opWeightMsgAggregatePrices, &weightMsgAggregatePrices, nil,
+		func(_ *rand.Rand) {
+			weightMsgAggregatePrices = defaultWeightMsgAggregatePrices
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgAggregatePrices,
+		itzelsimulation.SimulateMsgAggregatePrices(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -74,6 +89,14 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgSubmitPrice,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				itzelsimulation.SimulateMsgSubmitPrice(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgAggregatePrices,
+			defaultWeightMsgAggregatePrices,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				itzelsimulation.SimulateMsgAggregatePrices(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
