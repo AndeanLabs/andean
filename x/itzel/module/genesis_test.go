@@ -26,7 +26,7 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.ItzelKeeper(t)
+	k, ctx, _ := keepertest.ItzelKeeper(t)
 	itzel.InitGenesis(ctx, k, genesisState)
 	got := itzel.ExportGenesis(ctx, k)
 	require.NotNil(t, got)

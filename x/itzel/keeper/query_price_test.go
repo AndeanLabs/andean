@@ -18,7 +18,7 @@ import (
 var _ = strconv.IntSize
 
 func TestPriceQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ItzelKeeper(t)
+	keeper, ctx, _ := keepertest.ItzelKeeper(t)
 	msgs := createNPrice(keeper, ctx, 2)
 	tests := []struct {
 		desc     string
@@ -69,7 +69,7 @@ func TestPriceQuerySingle(t *testing.T) {
 }
 
 func TestPriceQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.ItzelKeeper(t)
+	keeper, ctx, _ := keepertest.ItzelKeeper(t)
 	msgs := createNPrice(keeper, ctx, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllPriceRequest {

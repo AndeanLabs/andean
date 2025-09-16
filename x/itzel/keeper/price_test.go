@@ -27,7 +27,7 @@ func createNPrice(keeper keeper.Keeper, ctx context.Context, n int) []types.Pric
 }
 
 func TestPriceGet(t *testing.T) {
-	keeper, ctx := keepertest.ItzelKeeper(t)
+	keeper, ctx, _ := keepertest.ItzelKeeper(t)
 	items := createNPrice(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetPrice(ctx,
@@ -41,7 +41,7 @@ func TestPriceGet(t *testing.T) {
 	}
 }
 func TestPriceRemove(t *testing.T) {
-	keeper, ctx := keepertest.ItzelKeeper(t)
+	keeper, ctx, _ := keepertest.ItzelKeeper(t)
 	items := createNPrice(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemovePrice(ctx,
@@ -55,7 +55,7 @@ func TestPriceRemove(t *testing.T) {
 }
 
 func TestPriceGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ItzelKeeper(t)
+	keeper, ctx, _ := keepertest.ItzelKeeper(t)
 	items := createNPrice(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

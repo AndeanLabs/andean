@@ -12,7 +12,7 @@ import (
 )
 
 func setupMsgServer(t testing.TB) (keeper.Keeper, types.MsgServer, context.Context) {
-	k, ctx := keepertest.ItzelKeeper(t)
+	k, ctx, _ := keepertest.ItzelKeeper(t)
 	return k, keeper.NewMsgServerImpl(k), ctx
 }
 

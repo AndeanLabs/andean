@@ -11,5 +11,5 @@ message Params {
   option (amino.name) = "andean/x/itzel/Params";
   option (gogoproto.equal) = true;
 
-  
+  repeated string authorized_oracles = 1 [ (gogoproto.nullable) = false ];
 }

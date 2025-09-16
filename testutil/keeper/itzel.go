@@ -3,6 +3,9 @@ package keeper
 import (
 	"testing"
 
+	"andean/testutil/sample"
+	"andean/x/itzel/keeper"
+	"andean/x/itzel/types"
 	"cosmossdk.io/log"
 	"cosmossdk.io/store"
 	"cosmossdk.io/store/metrics"
@@ -16,12 +19,9 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/stretchr/testify/require"
-
-	"andean/x/itzel/keeper"
-	"andean/x/itzel/types"
 )
 
-func ItzelKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
+func ItzelKeeper(t testing.TB) (keeper.Keeper, sdk.Context, string) {
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 
 	db := dbm.NewMemDB()
@@ -42,10 +42,15 @@ func ItzelKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 
 	ctx := sdk.NewContext(stateStore, cmtproto.Header{}, false, log.NewNopLogger())
 
+	// Create a sample address for the authorized oracle
+	authorizedOracle := sample.AccAddress()
+
 	// Initialize params
-	if err := k.SetParams(ctx, types.DefaultParams()); err != nil {
+	params := types.DefaultParams()
+	params.AuthorizedOracles = []string{authorizedOracle}
+	if err := k.SetParams(ctx, params); err != nil {
 		panic(err)
 	}
 
-	return k, ctx
+	return k, ctx, authorizedOracle
 }

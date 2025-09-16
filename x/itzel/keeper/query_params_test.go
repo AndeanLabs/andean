@@ -10,7 +10,7 @@ import (
 )
 
 func TestParamsQuery(t *testing.T) {
-	keeper, ctx := keepertest.ItzelKeeper(t)
+	keeper, ctx, _ := keepertest.ItzelKeeper(t)
 	params := types.DefaultParams()
 	require.NoError(t, keeper.SetParams(ctx, params))
 
