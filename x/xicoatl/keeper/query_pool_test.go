@@ -18,7 +18,7 @@ import (
 var _ = strconv.IntSize
 
 func TestPoolQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.XicoatlKeeper(t)
+	keeper, ctx, _, _, _, _ := keepertest.XicoatlKeeper(t)
 	msgs := createNPool(keeper, ctx, 2)
 	tests := []struct {
 		desc     string
@@ -69,7 +69,7 @@ func TestPoolQuerySingle(t *testing.T) {
 }
 
 func TestPoolQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.XicoatlKeeper(t)
+	keeper, ctx, _, _, _, _ := keepertest.XicoatlKeeper(t)
 	msgs := createNPool(keeper, ctx, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllPoolRequest {

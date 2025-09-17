@@ -26,7 +26,7 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.XicoatlKeeper(t)
+	k, ctx, _, _, _, _ := keepertest.XicoatlKeeper(t)
 	xicoatl.InitGenesis(ctx, k, genesisState)
 	got := xicoatl.ExportGenesis(ctx, k)
 	require.NotNil(t, got)

@@ -33,12 +33,25 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
 		return nil, errors.Wrapf(types.ErrInvalidTokens, "invalid token pair for pool %s", msg.PoolId)
 	}
 
+	// 2.5. Get the oracle price to be used for dynamic fees
+	source := msg.TokenInDenom + "/" + msg.TokenOutDenom
+	oraclePrice, found := k.ItzelKeeper.GetAggregatedPrice(ctx, source)
+	if found {
+		k.Logger().Info("Oracle price found for source", "source", source, "price", oraclePrice.Price)
+	}
+
 	// 3. Create the input coin object from the message
 	tokenIn = sdk.NewCoin(msg.TokenInDenom, math.NewIntFromUint64(msg.TokenInAmount))
 
 	// 4. Calculate the output amount based on the constant product formula (x * y = k)
-	// We apply a 0.3% fee on the input amount
-	fee := math.LegacyNewDecFromInt(tokenIn.Amount).Mul(math.LegacyNewDecWithPrec(3, 3)) // 0.3% fee
+	// We apply a dynamic fee based on the oracle price
+	feePercentage := math.LegacyNewDecWithPrec(3, 3) // Default 0.3% fee
+	if found {
+		k.Logger().Info("Oracle price found for source", "source", source, "price", oraclePrice.Price)
+		feePercentage = math.LegacyNewDecWithPrec(5, 3) // Use 0.5% fee if oracle price is available
+	}
+
+	fee := math.LegacyNewDecFromInt(tokenIn.Amount).Mul(feePercentage)
 	tokenInAmountAfterFee := math.LegacyNewDecFromInt(tokenIn.Amount).Sub(fee).TruncateInt()
 
 	numerator := poolTokenOutBalance.Mul(tokenInAmountAfterFee)

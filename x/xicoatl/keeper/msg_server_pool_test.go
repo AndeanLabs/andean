@@ -17,7 +17,7 @@ import (
 var _ = strconv.IntSize
 
 func TestPoolMsgServerCreate(t *testing.T) {
-	k, ctx := keepertest.XicoatlKeeper(t)
+	k, ctx, _, _, _, _ := keepertest.XicoatlKeeper(t)
 	srv := keeper.NewMsgServerImpl(k)
 	creator := sample.AccAddress()
 	for i := 0; i < 5; i++ {
@@ -82,7 +82,7 @@ func TestPoolMsgServerUpdate(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {
-			k, ctx := keepertest.XicoatlKeeper(t)
+			k, ctx, _, _, _, _ := keepertest.XicoatlKeeper(t)
 			srv := keeper.NewMsgServerImpl(k)
 			expected := &types.MsgCreatePool{
 				Creator: creator,
@@ -141,7 +141,7 @@ func TestPoolMsgServerDelete(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {
-			k, ctx := keepertest.XicoatlKeeper(t)
+			k, ctx, _, _, _, _ := keepertest.XicoatlKeeper(t)
 			srv := keeper.NewMsgServerImpl(k)
 
 			_, err := srv.CreatePool(ctx, &types.MsgCreatePool{

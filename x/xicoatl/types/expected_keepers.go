@@ -3,6 +3,7 @@ package types
 import (
 	"context"
 
+	itzeltypes "andean/x/itzel/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -24,4 +25,9 @@ type BankKeeper interface {
 type ParamSubspace interface {
 	Get(context.Context, []byte, interface{})
 	Set(context.Context, []byte, interface{})
+}
+
+// ItzelKeeper defines the expected interface for the Itzel module.
+type ItzelKeeper interface {
+	GetAggregatedPrice(ctx context.Context, source string) (val itzeltypes.AggregatedPrice, found bool)
 }

@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"bytes"
 	"context"
 	"testing"
 
@@ -19,6 +20,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
+	itzeltypes "andean/x/itzel/types"
 	"andean/x/xicoatl/keeper"
 	"andean/x/xicoatl/types"
 )
@@ -61,11 +63,23 @@ func (m *MockBankKeeper) SendCoins(ctx context.Context, fromAddr sdk.AccAddress,
 	return args.Error(0)
 }
 
-func XicoatlKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
+// MockItzelKeeper is a mock of ItzelKeeper interface
+type MockItzelKeeper struct {
+	mock.Mock
+}
+
+func (m *MockItzelKeeper) GetAggregatedPrice(ctx context.Context, source string) (val itzeltypes.AggregatedPrice, found bool) {
+	args := m.Called(ctx, source)
+	return args.Get(0).(itzeltypes.AggregatedPrice), args.Bool(1)
+}
+
+func XicoatlKeeper(t testing.TB) (keeper.Keeper, sdk.Context, *MockBankKeeper, *MockAccountKeeper, *MockItzelKeeper, *bytes.Buffer) {
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 
 	db := dbm.NewMemDB()
-	stateStore := store.NewCommitMultiStore(db, log.NewNopLogger(), metrics.NewNoOpMetrics())
+	var buf bytes.Buffer
+	logger := log.NewLogger(&buf)
+	stateStore := store.NewCommitMultiStore(db, logger, metrics.NewNoOpMetrics())
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
 	require.NoError(t, stateStore.LoadLatestVersion())
 
@@ -76,17 +90,19 @@ func XicoatlKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 	// Create mocks
 	mockAccountKeeper := new(MockAccountKeeper)
 	mockBankKeeper := new(MockBankKeeper)
+	mockItzelKeeper := new(MockItzelKeeper)
 
 	k := keeper.NewKeeper(
 		cdc,
 		runtime.NewKVStoreService(storeKey),
-		log.NewNopLogger(),
+		logger,
 		authority.String(),
 		mockBankKeeper,
 		mockAccountKeeper,
+		mockItzelKeeper,
 	)
 
-	ctx := sdk.NewContext(stateStore, cmtproto.Header{}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(stateStore, cmtproto.Header{}, false, logger)
 
 	// Setup mock expectations
 	moduleAddr := authtypes.NewModuleAddress(types.ModuleName)
@@ -98,5 +114,5 @@ func XicoatlKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 		panic(err)
 	}
 
-	return k, ctx
+	return k, ctx, mockBankKeeper, mockAccountKeeper, mockItzelKeeper, &buf
 }
