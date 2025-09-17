@@ -45,10 +45,29 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
 
 	// 4. Calculate the output amount based on the constant product formula (x * y = k)
 	// We apply a dynamic fee based on the oracle price
-	feePercentage := math.LegacyNewDecWithPrec(3, 3) // Default 0.3% fee
+	params := k.GetParams(ctx)
+	feePercentage := params.BaseFee
+
 	if found {
-		k.Logger().Info("Oracle price found for source", "source", source, "price", oraclePrice.Price)
-		feePercentage = math.LegacyNewDecWithPrec(5, 3) // Use 0.5% fee if oracle price is available
+		// Calculate pool price
+		poolPrice := math.LegacyNewDecFromInt(poolTokenOutBalance).Quo(math.LegacyNewDecFromInt(poolTokenInBalance))
+
+		// Oracle price is an int32, we need to convert it to a Dec
+		oraclePriceDec := math.LegacyNewDec(int64(oraclePrice.Price))
+
+		// Calculate deviation
+		var deviation math.LegacyDec
+		if poolPrice.GT(oraclePriceDec) {
+			deviation = poolPrice.Sub(oraclePriceDec).Quo(oraclePriceDec)
+		} else {
+			deviation = oraclePriceDec.Sub(poolPrice).Quo(oraclePriceDec)
+		}
+
+		// Calculate dynamic fee
+		dynamicFee := deviation.Mul(params.FeeMultiplier)
+		feePercentage = feePercentage.Add(dynamicFee)
+
+		k.Logger().Info("Oracle price found, applying dynamic fee", "source", source, "poolPrice", poolPrice, "oraclePrice", oraclePriceDec, "deviation", deviation, "dynamicFee", dynamicFee, "totalFee", feePercentage)
 	}
 
 	fee := math.LegacyNewDecFromInt(tokenIn.Amount).Mul(feePercentage)

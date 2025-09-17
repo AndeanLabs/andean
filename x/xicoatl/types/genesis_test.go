@@ -22,7 +22,7 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
-
+				Params: types.DefaultParams(),
 				PoolList: []types.Pool{
 					{
 						Index: "0",
@@ -38,6 +38,7 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "duplicated pool",
 			genState: &types.GenesisState{
+				Params: types.DefaultParams(),
 				PoolList: []types.Pool{
 					{
 						Index: "0",

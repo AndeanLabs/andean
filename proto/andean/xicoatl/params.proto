@@ -11,5 +11,12 @@ message Params {
   option (amino.name) = "andean/x/xicoatl/Params";
   option (gogoproto.equal) = true;
 
-  
+  string base_fee = 1 [
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  string fee_multiplier = 2 [
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
 }
