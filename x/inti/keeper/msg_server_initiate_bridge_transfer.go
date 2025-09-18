@@ -28,8 +28,8 @@ func (k msgServer) InitiateBridgeTransfer(goCtx context.Context, msg *types.MsgI
 	}
 
 	// 3. Lock the funds by sending them from the user to the module account
-	moduleAddr := k.accountKeeper.GetModuleAddress(types.ModuleName)
-	err = k.bankKeeper.SendCoins(ctx, creator, moduleAddr, sdk.NewCoins(coin))
+	moduleAddr := k.AccountKeeper.GetModuleAddress(types.ModuleName)
+	err = k.BankKeeper.SendCoins(ctx, creator, moduleAddr, sdk.NewCoins(coin))
 	if err != nil {
 		return nil, err
 	}

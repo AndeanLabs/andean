@@ -69,6 +69,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Send a confirm-bridge-transfer tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "index"}, {ProtoField: "finalTxHash"}},
 				},
+				{
+					RpcMethod:      "CreateLazyTransfer",
+					Use:            "create-lazy-transfer [amount] [recipient] [destination-chain]",
+					Short:          "Send a createLazyTransfer tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "amount"}, {ProtoField: "recipient"}, {ProtoField: "destinationChain"}},
+				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},
 		},

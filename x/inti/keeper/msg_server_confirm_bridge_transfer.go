@@ -13,7 +13,19 @@ import (
 func (k msgServer) ConfirmBridgeTransfer(goCtx context.Context, msg *types.MsgConfirmBridgeTransfer) (*types.MsgConfirmBridgeTransferResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Implement relayer authorization check. For now, we trust the creator.
+	// Check if the sender is an authorized relayer
+	params := k.GetParams(ctx)
+	isAuthorized := false
+	for _, addr := range params.AuthorizedRelayers {
+		if addr == msg.Creator {
+			isAuthorized = true
+			break
+		}
+	}
+
+	if !isAuthorized {
+		return nil, errors.Wrap(sdkerrors.ErrUnauthorized, "sender is not an authorized relayer")
+	}
 
 	// Find the original transfer record.
 	transfer, found := k.GetLazyBridgeTransfer(ctx, msg.Index)

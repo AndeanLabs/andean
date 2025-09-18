@@ -11,5 +11,5 @@ message Params {
   option (amino.name) = "andean/x/inti/Params";
   option (gogoproto.equal) = true;
 
-  
+  repeated string authorized_relayers = 1 [(gogoproto.nullable) = false];
 }

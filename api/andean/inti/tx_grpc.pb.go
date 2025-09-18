@@ -25,6 +25,7 @@ const (
 	Msg_DeleteLazyBridgeTransfer_FullMethodName = "/andean.inti.Msg/DeleteLazyBridgeTransfer"
 	Msg_InitiateBridgeTransfer_FullMethodName   = "/andean.inti.Msg/InitiateBridgeTransfer"
 	Msg_ConfirmBridgeTransfer_FullMethodName    = "/andean.inti.Msg/ConfirmBridgeTransfer"
+	Msg_CreateLazyTransfer_FullMethodName       = "/andean.inti.Msg/CreateLazyTransfer"
 )
 
 // MsgClient is the client API for Msg service.
@@ -39,6 +40,7 @@ type MsgClient interface {
 	DeleteLazyBridgeTransfer(ctx context.Context, in *MsgDeleteLazyBridgeTransfer, opts ...grpc.CallOption) (*MsgDeleteLazyBridgeTransferResponse, error)
 	InitiateBridgeTransfer(ctx context.Context, in *MsgInitiateBridgeTransfer, opts ...grpc.CallOption) (*MsgInitiateBridgeTransferResponse, error)
 	ConfirmBridgeTransfer(ctx context.Context, in *MsgConfirmBridgeTransfer, opts ...grpc.CallOption) (*MsgConfirmBridgeTransferResponse, error)
+	CreateLazyTransfer(ctx context.Context, in *MsgCreateLazyTransfer, opts ...grpc.CallOption) (*MsgCreateLazyTransferResponse, error)
 }
 
 type msgClient struct {
@@ -103,6 +105,15 @@ func (c *msgClient) ConfirmBridgeTransfer(ctx context.Context, in *MsgConfirmBri
 	return out, nil
 }
 
+func (c *msgClient) CreateLazyTransfer(ctx context.Context, in *MsgCreateLazyTransfer, opts ...grpc.CallOption) (*MsgCreateLazyTransferResponse, error) {
+	out := new(MsgCreateLazyTransferResponse)
+	err := c.cc.Invoke(ctx, Msg_CreateLazyTransfer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -115,6 +126,7 @@ type MsgServer interface {
 	DeleteLazyBridgeTransfer(context.Context, *MsgDeleteLazyBridgeTransfer) (*MsgDeleteLazyBridgeTransferResponse, error)
 	InitiateBridgeTransfer(context.Context, *MsgInitiateBridgeTransfer) (*MsgInitiateBridgeTransferResponse, error)
 	ConfirmBridgeTransfer(context.Context, *MsgConfirmBridgeTransfer) (*MsgConfirmBridgeTransferResponse, error)
+	CreateLazyTransfer(context.Context, *MsgCreateLazyTransfer) (*MsgCreateLazyTransferResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -139,6 +151,9 @@ func (UnimplementedMsgServer) InitiateBridgeTransfer(context.Context, *MsgInitia
 }
 func (UnimplementedMsgServer) ConfirmBridgeTransfer(context.Context, *MsgConfirmBridgeTransfer) (*MsgConfirmBridgeTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmBridgeTransfer not implemented")
+}
+func (UnimplementedMsgServer) CreateLazyTransfer(context.Context, *MsgCreateLazyTransfer) (*MsgCreateLazyTransferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateLazyTransfer not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -261,6 +276,24 @@ func _Msg_ConfirmBridgeTransfer_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CreateLazyTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateLazyTransfer)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateLazyTransfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_CreateLazyTransfer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateLazyTransfer(ctx, req.(*MsgCreateLazyTransfer))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -291,6 +324,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmBridgeTransfer",
 			Handler:    _Msg_ConfirmBridgeTransfer_Handler,
+		},
+		{
+			MethodName: "CreateLazyTransfer",
+			Handler:    _Msg_CreateLazyTransfer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

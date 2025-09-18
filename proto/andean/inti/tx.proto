@@ -8,6 +8,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "andean/inti/params.proto";
 import "andean/inti/lazy_bridge_transfer.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "andean/x/inti/types";
 
@@ -23,6 +24,7 @@ service Msg {
   rpc DeleteLazyBridgeTransfer (MsgDeleteLazyBridgeTransfer) returns (MsgDeleteLazyBridgeTransferResponse);
   rpc InitiateBridgeTransfer   (MsgInitiateBridgeTransfer  ) returns (MsgInitiateBridgeTransferResponse  );
   rpc ConfirmBridgeTransfer    (MsgConfirmBridgeTransfer   ) returns (MsgConfirmBridgeTransferResponse   );
+  rpc CreateLazyTransfer       (MsgCreateLazyTransfer      ) returns (MsgCreateLazyTransferResponse      );
 }
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
@@ -92,4 +94,14 @@ message MsgConfirmBridgeTransfer {
 }
 
 message MsgConfirmBridgeTransferResponse {}
+
+message MsgCreateLazyTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string                   creator          = 1;
+  cosmos.base.v1beta1.Coin amount           = 2 [(gogoproto.nullable) = false];
+  string                   recipient        = 3;
+  string                   destinationChain = 4;
+}
+
+message MsgCreateLazyTransferResponse {}
 

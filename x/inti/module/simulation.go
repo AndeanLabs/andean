@@ -43,6 +43,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgConfirmBridgeTransfer int = 100
 
+	opWeightMsgCreateLazyTransfer = "op_weight_msg_create_lazy_transfer"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateLazyTransfer int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -131,6 +135,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		intisimulation.SimulateMsgConfirmBridgeTransfer(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgCreateLazyTransfer int
+	simState.AppParams.GetOrGenerate(opWeightMsgCreateLazyTransfer, &weightMsgCreateLazyTransfer, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateLazyTransfer = defaultWeightMsgCreateLazyTransfer
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateLazyTransfer,
+		intisimulation.SimulateMsgCreateLazyTransfer(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -176,6 +191,14 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgConfirmBridgeTransfer,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				intisimulation.SimulateMsgConfirmBridgeTransfer(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgCreateLazyTransfer,
+			defaultWeightMsgCreateLazyTransfer,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				intisimulation.SimulateMsgCreateLazyTransfer(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

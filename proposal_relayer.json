@@ -1,0 +1,14 @@
+{
+  "messages": [
+    {
+      "@type": "/andean.inti.MsgSetRelayer",
+      "authority": "andean17xpfdups2gqp5f4jkeyjjel0k2qf28efjd2y2w",
+      "relayer": "andean1y4pm5wfzk7vx5xyuxrq9rpn4fqvc9qjvfjn66s"
+    }
+  ],
+  "metadata": "urn:cid:null",
+  "deposit": "10000000stake",
+  "title": "Designar Relayer para el Puente INTI v2",
+  "summary": "Esta propuesta designa a la cuenta andean1y4pm5wfzk7vx5xyuxrq9rpn4fqvc9qjvfjn66s como un relayer autorizado para el módulo INTI Lazy Bridge.",
+  "proposer": "andean1fp5nz0pu6cejvd4fyery8m69mxv7yzykxz8fm9"
+}
