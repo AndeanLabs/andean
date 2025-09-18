@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package andean.inti;
+
+import "amino/amino.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "andean/inti/params.proto";
+import "andean/inti/lazy_bridge_transfer.proto";
+
+option go_package = "andean/x/inti/types";
+
+// Msg defines the Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters. The authority defaults to the x/gov module account.
+  rpc UpdateParams             (MsgUpdateParams            ) returns (MsgUpdateParamsResponse            );
+  rpc CreateLazyBridgeTransfer (MsgCreateLazyBridgeTransfer) returns (MsgCreateLazyBridgeTransferResponse);
+  rpc UpdateLazyBridgeTransfer (MsgUpdateLazyBridgeTransfer) returns (MsgUpdateLazyBridgeTransferResponse);
+  rpc DeleteLazyBridgeTransfer (MsgDeleteLazyBridgeTransfer) returns (MsgDeleteLazyBridgeTransferResponse);
+  rpc InitiateBridgeTransfer   (MsgInitiateBridgeTransfer  ) returns (MsgInitiateBridgeTransferResponse  );
+  rpc ConfirmBridgeTransfer    (MsgConfirmBridgeTransfer   ) returns (MsgConfirmBridgeTransferResponse   );
+}
+// MsgUpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) =                     "authority";
+  option           (amino.name) = "andean/x/inti/MsgUpdateParams";
+  
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // params defines the module parameters to update.
+  
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}
+
+message MsgCreateLazyBridgeTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator     = 1;
+  string index       = 2;
+  string sourceChain = 3;
+  string destChain   = 4;
+  string amount      = 5;
+  string status      = 6;
+}
+
+message MsgCreateLazyBridgeTransferResponse {}
+
+message MsgUpdateLazyBridgeTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator     = 1;
+  string index       = 2;
+  string sourceChain = 3;
+  string destChain   = 4;
+  string amount      = 5;
+  string status      = 6;
+}
+
+message MsgUpdateLazyBridgeTransferResponse {}
+
+message MsgDeleteLazyBridgeTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+  string index   = 2;
+}
+
+message MsgDeleteLazyBridgeTransferResponse {}
+
+message MsgInitiateBridgeTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator     = 1;
+  string sourceChain = 2;
+  string destChain   = 3;
+  string amount      = 4;
+}
+
+message MsgInitiateBridgeTransferResponse {}
+
+message MsgConfirmBridgeTransfer {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator     = 1;
+  string index       = 2;
+  string finalTxHash = 3;
+}
+
+message MsgConfirmBridgeTransferResponse {}
+

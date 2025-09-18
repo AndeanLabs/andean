@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package andean.inti;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "andean/inti/params.proto";
+import "andean/inti/lazy_bridge_transfer.proto";
+
+option go_package = "andean/x/inti/types";
+
+// GenesisState defines the inti module's genesis state.
+message GenesisState {
+  
+  // params defines all the parameters of the module.
+           Params             params                 = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  repeated LazyBridgeTransfer lazyBridgeTransferList = 2 [(gogoproto.nullable) = false] ;
+}
+

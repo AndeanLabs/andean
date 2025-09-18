@@ -36,3 +36,5 @@ genesis:
         expedited_min_deposit:
         - denom: "uandean"
           amount: "50000000"
+        voting_period: 120s
+        expedited_voting_period: 60s

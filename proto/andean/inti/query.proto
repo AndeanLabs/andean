@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package andean.inti;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "andean/inti/params.proto";
+import "andean/inti/lazy_bridge_transfer.proto";
+
+option go_package = "andean/x/inti/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/andean/inti/params";
+  
+  }
+  
+  // Queries a list of LazyBridgeTransfer items.
+  rpc LazyBridgeTransfer    (QueryGetLazyBridgeTransferRequest) returns (QueryGetLazyBridgeTransferResponse) {
+    option (google.api.http).get = "/andean/inti/lazy_bridge_transfer/{index}";
+  
+  }
+  rpc LazyBridgeTransferAll (QueryAllLazyBridgeTransferRequest) returns (QueryAllLazyBridgeTransferResponse) {
+    option (google.api.http).get = "/andean/inti/lazy_bridge_transfer";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+message QueryGetLazyBridgeTransferRequest {
+  string index = 1;
+}
+
+message QueryGetLazyBridgeTransferResponse {
+  LazyBridgeTransfer lazyBridgeTransfer = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllLazyBridgeTransferRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllLazyBridgeTransferResponse {
+  repeated LazyBridgeTransfer                     lazyBridgeTransfer = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination         = 2;
+}
+

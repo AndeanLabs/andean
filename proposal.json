@@ -1,0 +1,17 @@
+{
+  "messages": [
+    {
+      "@type": "/andean.itzel.MsgUpdateParams",
+      "authority": "andean10d07y265gmmuvt4z0w9aw880jnsr700jsa7aur",
+      "params": {
+        "authorized_oracles": [
+          "andean1gpa9mf9tfajt3rc70acupz8pg3pq6c4u3vpww4"
+        ]
+      }
+    }
+  ],
+  "metadata": "Authorize alice as an oracle",
+  "deposit": "10000000uandean",
+  "title": "Authorize Oracle",
+  "summary": "This proposal authorizes the account 'alice' to be an oracle for the itzel module."
+}

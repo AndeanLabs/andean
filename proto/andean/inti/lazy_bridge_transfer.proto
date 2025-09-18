@@ -1,0 +1,14 @@
+syntax = "proto3";
+package andean.inti;
+
+option go_package = "andean/x/inti/types";
+
+message LazyBridgeTransfer {
+  string index = 1; 
+  string sourceChain = 2; 
+  string destChain = 3; 
+  string amount = 4; 
+  string status = 5; 
+  string creator = 6;
+}
+

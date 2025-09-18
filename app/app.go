@@ -78,6 +78,7 @@ import (
 	itzelmodulekeeper "andean/x/itzel/keeper"
 	xicoatlmodulekeeper "andean/x/xicoatl/keeper"
 
+	intimodulekeeper "andean/x/inti/keeper"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"andean/docs"
@@ -149,6 +150,7 @@ type App struct {
 
 	XicoatlKeeper xicoatlmodulekeeper.Keeper
 	ItzelKeeper   itzelmodulekeeper.Keeper
+	IntiKeeper    intimodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// simulation manager
@@ -254,6 +256,7 @@ func New(
 		&app.CircuitBreakerKeeper,
 		&app.XicoatlKeeper,
 		&app.ItzelKeeper,
+		&app.IntiKeeper,
 		// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	); err != nil {
 		panic(err)

@@ -20,33 +20,33 @@ func TestSwapDynamicFee(t *testing.T) {
 	creator := sample.AccAddress()
 	poolAmount := uint64(1000)
 	swapAmount := uint64(100)
-	baseFee := math.LegacyNewDecWithPrec(1, 3) // 0.1%
+	baseFee := math.LegacyNewDecWithPrec(1, 3)       // 0.1%
 	feeMultiplier := math.LegacyNewDecWithPrec(5, 1) // 0.5
 
 	// Test cases
 	tests := []struct {
-		name         string
-		mockOracle   bool
-		oraclePrice  int32
-		expectedLog  string
+		name        string
+		mockOracle  bool
+		oraclePrice int32
+		expectedLog string
 	}{
 		{
-			name:         "oracle price found - pool price is aligned",
-			mockOracle:   true,
-			oraclePrice:  1,
-			expectedLog:  "Oracle price found, applying dynamic fee",
+			name:        "oracle price found - pool price is aligned",
+			mockOracle:  true,
+			oraclePrice: 1,
+			expectedLog: "Oracle price found, applying dynamic fee",
 		},
 		{
-			name:         "oracle price found - pool price deviates",
-			mockOracle:   true,
-			oraclePrice:  2, // Pool price is 1, oracle is 2
-			expectedLog:  "Oracle price found, applying dynamic fee",
+			name:        "oracle price found - pool price deviates",
+			mockOracle:  true,
+			oraclePrice: 2, // Pool price is 1, oracle is 2
+			expectedLog: "Oracle price found, applying dynamic fee",
 		},
 		{
-			name:         "oracle price not found - base fee",
-			mockOracle:   false,
-			oraclePrice:  0,
-			expectedLog:  "",
+			name:        "oracle price not found - base fee",
+			mockOracle:  false,
+			oraclePrice: 0,
+			expectedLog: "",
 		},
 	}
 
