@@ -15,7 +15,7 @@ echo "✅ Prerrequisitos cumplidos."
 # --- Clonar y Construir ---
 if [ ! -d "andean" ]; then
     echo "📥 Clonando repositorio..."
-    git clone https://github.com/andean-labs/andean.git
+    git clone https://github.com/AndeanLabs/andean.git
 fi
 
 cd andean
