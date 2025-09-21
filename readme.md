@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/github/tag/AndeanLabs/andean.svg)](https://github.com/AndeanLabs/andean/releases/latest)
 [![License](https://img.shields.io/github/license/AndeanLabs/andean.svg)](https://github.com/AndeanLabs/andean/blob/main/LICENSE)
 
-> Blockchain experimental para desarrollo y pruebas locales. Combina disponibilidad de datos (Data Availability) con pruebas ZK para finanzas descentralizadas con privacidad opcional y costos ultra-bajos.
+> Blockchain experimental para desarrollo y pruebas locales. Combina disponibilidad de datos (Data Availability) con pruebas ZK para finanzas descentralizadas con privacidad opcional, Lazy Bridge y costos ultra-bajos.
 
 ⚠️ **VERSIÓN DE DESARROLLO**: Esta implementación es solo para testing local. No se recomienda para uso en producción.
 
@@ -47,17 +47,57 @@
 - **Multi-nivel**: 4 niveles de privacidad configurables
 - **Estado**: 🚧 Experimental
 
+
+## 🌟 Módulos Futuros
+
+
+### ✅ CHASQUI P2P Network
+- **Pagos Directos**: Envío de remesas y transferencias P2P sin intermediarios  
+- **Privacidad Opcional**: Soporte para rutas privadas en múltiples saltos (multi-hop)  
+- **Costo Ultra-Bajo**: Simulación de transacciones por ~$0.0001 en entorno local  
+- **Enfoque Regional**: Diseñado para pagos en regiones andinas  
+- **Estado**: 🚧 En desarrollo inicial
+
+### ✅ TLAHUIZCAL MEV Shield
+- **Batch Auctions**: Protección contra MEV mediante subastas por bloques  
+- **Hooks Avanzados**: Integración con módulos AMM para ejecución justa  
+- **MEV Redistribution**: Captura y redistribución de MEV a proveedores de liquidez  
+- **Prevención de Ataques**: Evita *sandwich attacks* y manipulaciones de precio  
+- **Estado**: 🚧 Prototipo en pruebas
+
+### ✅ VIRACOCHA Settlement Layer
+- **Validación ZK**: Verificación de Zero-Knowledge proofs on-chain  
+- **Cross-chain Settlement**: Resolución de transacciones privadas entre cadenas (simulado)  
+- **Gestión de Proofs**: Registro, verificación y tracking de pruebas criptográficas  
+- **Estado**: 🚧 Implementación básica
+
+### ✅ ANDES Staking Module
+- **Token Staking**: Delegación de ANDES para asegurar la red  
+- **Rewards Dinámicos**: APR ajustable entre 15% y 60% según condiciones de red  
+- **Slashing**: Penalización por inactividad o mala conducta del validador  
+- **Gobernanza**: Integración con sistema de votación on-chain  
+- **Estado**: 🚧 Versión inicial funcional
+
+### ✅ Governance Module
+- **Votación On-Chain**: Decisiones sobre upgrades, parámetros y tesorería  
+- **Privacy Voting**: Votaciones con privacidad opcional para participantes  
+- **Integración Total**: Compatible con módulos económicos, sociales y técnicos  
+- **Transparencia y Seguridad**: Registro auditado de todas las propuestas  
+- **Estado**: 🚧 Activo en entorno de pruebas
+
+
 ---
 
 ## 📊 Rendimiento Local
 
-| Operación                | TPS Estimado | Latencia | Costo Local | Estado         |
-|--------------------------|--------------|----------|-------------|----------------|
-| Transferencias básicas   | Variable*    | <2s      | Gratis      | ✅ Funcional    |
-| Swaps AMM (simulados)    | Variable*    | <1s      | Gratis      | 🚧 En desarrollo |
-| Operaciones LP           | Variable*    | <2s      | Gratis      | 🚧 En desarrollo |
-| Transacciones ZK (mock)  | Variable*    | <4s      | Gratis      | 🚧 Experimental  |
-| Cross-chain (simulado)   | Variable*    | <5s      | Gratis      | 🚧 Prototipo     |
+| Operación | TPS | Latencia | Costo USD | Estado |
+|-----------|-----|----------|-----------|--------|
+| Transferencias aBOB/aUSD | 30,000 | <2s | $0.0001 | 🚧 No Implementado |
+| Swaps AMM | 25,000 | <1s | $0.0002 |  ✅ Funcional |
+| Operaciones LP | 15,000 | <2s | $0.0004 |  ✅ Funcional |
+| Transacciones ZK privadas | 8,000 | <4s | $0.001 | 🚧 Experimental |
+| Cross-chain bridges | 8,000 | <5s | $0.005 | 🚧 Prototipo |
+| Hook Execution | 20,000 | <1s | Variable | 🚧 Experimental |
 
 📌 *El rendimiento depende de tu hardware local.
 
@@ -367,34 +407,6 @@ andeand tx pachamama generate-proof \
 
 ---
 
-## 📡 APIs y Monitoreo
-
-### Endpoints Disponibles
-
-| Tipo | URL | Descripción |
-|------|-----|-------------|
-| RPC | `http://127.0.0.1:26657` | Tendermint RPC |
-| REST API | `http://127.0.0.1:1317` | Cosmos REST API |
-| WebSocket | `ws://127.0.0.1:26657/websocket` | Eventos en tiempo real |
-
-### Ejemplos de API REST
-
-```bash
-# Información general
-curl http://127.0.0.1:1317/cosmos/base/tendermint/v1beta1/node_info
-
-# Balance de una cuenta
-curl http://127.0.0.1:1317/cosmos/bank/v1beta1/balances/$MI_ADDR
-
-# Último bloque
-curl http://127.0.0.1:1317/cosmos/base/tendermint/v1beta1/blocks/latest
-
-# Pools de Xicoatl
-curl http://127.0.0.1:1317/andean/xicoatl/v1/pools
-
-# Precios de Oracle
-curl http://127.0.0.1:1317/andean/itzel/v1/prices
-```
 
 ### Monitoreo con WebSocket
 
@@ -762,7 +774,7 @@ Antes de reportar un issue, por favor:
 
 ---
 
-## 🌐 Comunidad y Soporte
+## 🌐 Comunidad y Soporte (No existe aún)
 
 - 💬 [Discord](https://discord.gg/andean-chain) - Chat en tiempo real
 - 🐦 [Twitter](https://twitter.com/andean_chain) - Actualizaciones y noticias
@@ -770,27 +782,12 @@ Antes de reportar un issue, por favor:
 - 🗣️ [Forum](https://forum.andean-chain.org) - Discusiones técnicas
 - 📧 [Email](mailto:hello@andean-chain.org) - Contacto directo
 
-### Roadmap
-
-- [ ] **Q1 2024**: Finalizar módulos experimentales
-- [ ] **Q2 2024**: Implementar ZK proofs reales
-- [ ] **Q3 2024**: Red de pruebas pública
-- [ ] **Q4 2024**: Mainnet candidata
-
----
 
 ## 📄 Licencia
 
 Este proyecto está licenciado bajo la **MIT License** - ver el archivo [LICENSE](LICENSE) para más detalles.
 
----
 
-## 🙏 Agradecimientos
-
-- **Cosmos SDK** - Framework base
-- **Tendermint** - Consenso BFT
-- **CometBFT** - Motor de consenso
-- La comunidad de **desarrollo blockchain en América Latina**
 
 ---
 
@@ -799,8 +796,6 @@ Este proyecto está licenciado bajo la **MIT License** - ver el archivo [LICENSE
 **Andean Chain** 🏔️⚡
 
 *Blockchain experimental de próxima generación para América Latina*
-
-[Documentación](https://docs.andean-chain.org) • [API Reference](https://api.andean-chain.org) • [Examples](https://github.com/AndeanLabs/andean-examples)
 
 Made with ❤️ by the Andean Labs team
 
