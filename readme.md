@@ -65,14 +65,20 @@
 Primero necesitas tener una instancia de Andean Chain corriendo. Elige una de estas opciones:
 
 ```bash
-# 1. Clonar el repositorio
-git clone https://github.com/andean-labs/andean.git
+# 1. Clonar el repositorio (solo si no existe)
+if [ ! -d "andean" ]; then
+    git clone https://github.com/andean-labs/andean.git
+else
+    echo "⚠️  Directorio 'andean' ya existe. Entrando al directorio existente..."
+fi
 cd andean
 
 # 2. Ejecutar el script automático
 chmod +x setup-reviewer.sh
 ./setup-reviewer.sh
 ```
+
+**Nota**: Si ya clonaste el repositorio antes, simplemente haz `cd andean` y ejecuta el script.
 
 El script automáticamente:
 - ✅ Construye la imagen Docker
@@ -81,25 +87,37 @@ El script automáticamente:
 - ✅ Crea una cuenta con fondos
 - ✅ Deja la cadena corriendo en segundo plano
 
-#### Opción B: Setup Manual con Docker
+#### Opción B: Setup Manual con Docker (Con Visibilidad de Logs)
 
-Si prefieres controlar cada paso:
+Si prefieres controlar cada paso y ver los logs en tiempo real:
 
 ```bash
-# 1. Clonar y construir
-git clone https://github.com/andean-labs/andean.git
+# 1. Clonar y construir (si no lo hiciste antes)
+if [ ! -d "andean" ]; then
+    git clone https://github.com/andean-labs/andean.git
+fi
 cd andean
 docker build -t andean-dev .
 
-# 2. Iniciar contenedor en background
+# 2. Limpiar contenedores anteriores
+docker stop andean-dev-container 2>/dev/null || true
+docker rm andean-dev-container 2>/dev/null || true
+
+# 3. Iniciar contenedor en background
 docker run -d --rm \
   -v $(pwd):/workspace \
   -p 1317:1317 -p 26656:26656 -p 26657:26657 \
   --name andean-dev-container \
-  andean-dev
+  --platform linux/amd64 \
+  andean-dev tail -f /dev/null
 
-# 3. Configurar la cadena dentro del contenedor
+# 4. Verificar que el contenedor está corriendo
+docker ps | grep andean-dev-container
+
+# 5. Configurar la cadena dentro del contenedor
+echo "Configurando la blockchain..."
 docker exec andean-dev-container bash -c "
+  cd /workspace &&
   go install ./cmd/andeand &&
   andeand init test-chain --chain-id andean-test-1 --home /workspace/.andean &&
   andeand keys add alice --keyring-backend test --home /workspace/.andean &&
@@ -108,81 +126,107 @@ docker exec andean-dev-container bash -c "
   andeand genesis collect-gentxs --home /workspace/.andean
 "
 
-# 4. Iniciar la blockchain en background
-docker exec -d andean-dev-container andeand start --home /workspace/.andean --minimum-gas-prices 0stake
-
-# 5. Esperar a que inicie (unos 10 segundos)
-echo "Esperando a que la blockchain inicie..."
-sleep 10
-
-# 6. Verificar que esté funcionando
-curl -s http://localhost:26657/status || echo "⚠️  La blockchain aún está iniciando, espera unos segundos más"
+# 6. Iniciar la blockchain CON LOGS VISIBLES
+echo ""
+echo "🔥 Iniciando la blockchain... Los logs aparecerán abajo:"
+echo "   Cuando veas 'committed state' repetidamente, la blockchain está lista."
+echo "   Presiona Ctrl+C para detener los logs (la blockchain seguirá corriendo)."
+echo ""
+docker exec andean-dev-container andeand start --home /workspace/.andean --minimum-gas-prices 0stake
 ```
+
+**Después de ver los logs y que aparezcan bloques**, presiona `Ctrl+C` para salir de los logs. La blockchain seguirá corriendo en background.
 
 ### Paso 2: Conectar con el CLI Nativo (Recomendado)
 
-Una vez que la blockchain esté corriendo, verifica que responda:
+**Importante**: Abre una **nueva terminal** para este paso (manteniendo la blockchain corriendo en la terminal anterior).
+
+#### Verificar que la Blockchain está Corriendo
 
 ```bash
-# Verificar que la blockchain esté corriendo
-curl http://localhost:26657/status
+# En la nueva terminal, verificar conectividad
+curl http://localhost:26657/status 2>/dev/null | grep -q "chain_id" && echo "✅ Blockchain corriendo" || echo "❌ Blockchain no disponible"
 
-# Si obtienes una respuesta JSON, ¡está funcionando!
+# Si obtienes "❌", espera 30 segundos más y reintenta
+# Los contenedores pueden tardar en estar listos
+sleep 30
+curl http://localhost:26657/status 2>/dev/null | grep -q "chain_id" && echo "✅ Blockchain corriendo" || echo "❌ Necesitas revisar el setup"
+
+# Ver los últimos bloques para confirmar que está generando bloques
+curl -s http://localhost:26657/status | grep -o '"latest_block_height":"[^"]*"' || echo "Esperando bloques..."
 ```
 
 #### Opción A: CLI Nativo (Más Rápido y Conveniente)
 
 ```bash
-# 1. En una nueva terminal (manteniendo la blockchain corriendo), instalar el CLI localmente
-cd andean  # Asegúrate de estar en el directorio del proyecto
+# 1. Asegúrate de estar en el directorio andean
+cd andean  
+
+# 2. Instalar el CLI localmente (requiere Go 1.21+)
 go install ./cmd/andeand
 
 # Verificar que se instaló correctamente
-which andeand || echo "❌ Error: andeand no se instaló. Verifica que Go esté en tu PATH"
+andeand version || echo "❌ Error: Verifica que Go esté instalado y en tu PATH"
 
-# 2. Configurar variables de entorno
-export RPC_ENDPOINT="http://localhost:26657"
-export API_ENDPOINT="http://localhost:1317"
+# 3. Configurar variables de entorno (IMPORTANTE: usar 127.0.0.1 en lugar de localhost)
+export RPC_ENDPOINT="http://127.0.0.1:26657"
+export API_ENDPOINT="http://127.0.0.1:1317"
 export CHAIN_ID="andean-test-1"
 
-# 3. Verificar conexión
-andeand status --node $RPC_ENDPOINT
+# 4. Verificar conexión (reintentar si falla)
+echo "Verificando conexión..."
+for i in {1..5}; do
+    if andeand status --node $RPC_ENDPOINT > /dev/null 2>&1; then
+        echo "✅ Conexión exitosa"
+        break
+    else
+        echo "Intento $i/5 - Esperando..."
+        sleep 10
+    fi
+    if [ $i -eq 5 ]; then
+        echo "❌ No se pudo conectar. Verifica que la blockchain esté corriendo."
+        exit 1
+    fi
+done
 
-# 4. Crear tu propia cuenta
+# 5. Crear tu propia cuenta
 andeand keys add mi-cuenta --keyring-backend test
 export MI_DIRECCION=$(andeand keys show mi-cuenta -a --keyring-backend test)
 echo "✅ Tu nueva dirección: $MI_DIRECCION"
 
-# 5. Obtener fondos desde la cuenta alice que ya tiene balance
-# Primero necesitamos obtener la clave privada de alice del contenedor
+# 6. Obtener fondos desde la cuenta alice del contenedor
+echo "Obteniendo fondos iniciales..."
 
-# Obtener la dirección de alice
+# Obtener dirección de alice
 ALICE_ADDR=$(docker exec andean-dev-container andeand keys show alice -a --keyring-backend test --home /workspace/.andean)
 echo "📍 Dirección de Alice (con fondos): $ALICE_ADDR"
 
-# Exportar la clave de alice para usar localmente
+# Exportar e importar clave de alice
 docker exec andean-dev-container andeand keys export alice --keyring-backend test --home /workspace/.andean --unsafe --unarmored-hex > /tmp/alice_key.txt
 andeand keys import alice /tmp/alice_key.txt --keyring-backend test
-rm /tmp/alice_key.txt  # Limpiar archivo temporal
+rm -f /tmp/alice_key.txt
 
-# 6. Verificar balance de alice
+# 7. Verificar balance de alice
+echo "Balance de Alice:"
 andeand query bank balances $ALICE_ADDR --node $RPC_ENDPOINT
 
-# 7. Transferir fondos iniciales a tu cuenta
-echo "💸 Transfiriendo fondos iniciales..."
+# 8. Transferir fondos iniciales a tu cuenta
+echo "💸 Transfiriendo fondos..."
 andeand tx bank send alice $MI_DIRECCION 100000000aand \
   --chain-id $CHAIN_ID \
   --keyring-backend test \
   --node $RPC_ENDPOINT \
-  --gas auto --gas-adjustment 1.5 \
-  --fees 1000aand \
+  --gas 200000 \
+  --gas-prices 0.025aand \
+  --broadcast-mode sync \
   -y
 
-# 8. Esperar confirmación (unos segundos)
-echo "⏳ Esperando confirmación de la transacción..."
-sleep 5
+# 9. Esperar y verificar
+echo "⏳ Esperando confirmación..."
+sleep 8
 
-# 9. Verificar tu nuevo balance
+# 10. Verificar tu nuevo balance
+echo "Tu balance final:"
 andeand query bank balances $MI_DIRECCION --node $RPC_ENDPOINT
 ```
 
@@ -346,35 +390,48 @@ andeand query staking validators --node $RPC_ENDPOINT
 ### Problemas Comunes
 
 **❌ "connection refused" o "dial tcp: connect: connection refused"**
-- Verifica que Docker esté corriendo: `docker ps`
-- Confirma que el contenedor esté activo: `docker ps | grep andean`
-- Reinicia la blockchain si es necesario:
+- **Causa más común**: IPv6 vs IPv4. Usa `127.0.0.1` en lugar de `localhost`
+- Verifica contenedor: `docker ps | grep andean-dev-container`
+- Reinicia si es necesario: `docker restart andean-dev-container && sleep 15`
+- Prueba diferentes endpoints:
   ```bash
-  docker restart andean-dev-container
-  sleep 10
+  # Probar diferentes opciones
+  curl http://127.0.0.1:26657/status
   curl http://localhost:26657/status
+  curl http://0.0.0.0:26657/status
   ```
 
-**❌ "andeand: command not found"**
-- Ve a directorio del proyecto: `cd andean`
-- Reinstala: `go install ./cmd/andeand`
-- Verifica Go PATH: `echo $GOPATH` y `which go`
+**❌ "cannot execute binary file" (en contenedor)**
+- Problema de arquitectura (M1 Mac o ARM)
+- Añadir `--platform linux/amd64` al comando docker:
+  ```bash
+  docker run -d --platform linux/amd64 --rm \
+    -v $(pwd):/workspace \
+    -p 1317:1317 -p 26656:26656 -p 26657:26657 \
+    --name andean-dev-container \
+    andean-dev tail -f /dev/null
+  ```
+
+**❌ "andeand: command not found" o "go: command not found"**
+- Instala Go 1.21+ desde https://golang.org/dl/
+- Verifica: `go version` (debe mostrar 1.21 o superior)
+- Añade Go al PATH:
+  ```bash
+  export PATH=$PATH:/usr/local/go/bin
+  export PATH=$PATH:$(go env GOPATH)/bin
+  ```
+
+**❌ "directorio 'andean' ya existe"**
+- Normal si ya clonaste antes
+- Simplemente: `cd andean && ./setup-reviewer.sh`
 
 **❌ "account sequence mismatch"**
-- Tu cuenta local está desincronizada
-- Consulta la secuencia correcta: `andeand query auth account $MI_DIRECCION --node $RPC_ENDPOINT`
+- Tu cuenta está desincronizada
+- Consulta secuencia: `andeand query auth account $MI_DIRECCION --node $RPC_ENDPOINT`
 
 **❌ "insufficient funds" o "not enough gas"**
-- Verifica tu balance: `andeand query bank balances $MI_DIRECCION --node $RPC_ENDPOINT`
-- Aumenta las fees: `--fees 2000aand` en lugar de `1000aand`
-
-**❌ "invalid chain-id"**
-- Verifica el chain-id: `andeand status --node $RPC_ENDPOINT | grep chain_id`
-- Debe ser exactamente: `andean-test-1`
-
-**❌ "key not found"**
-- Lista tus claves: `andeand keys list --keyring-backend test`
-- Recrea la clave si es necesario: `andeand keys add mi-cuenta --keyring-backend test`
+- Verifica balance: `andeand query bank balances $MI_DIRECCION --node $RPC_ENDPOINT`
+- Usa gas fijo: `--gas 200000 --gas-prices 0.025aand` en lugar de `--gas auto`
 
 ## 🧹 Limpieza y Detener la Blockchain
 
