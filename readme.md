@@ -125,6 +125,103 @@ ALICE_ADDR=$(andeand keys show alice -a --keyring-backend test --home /workspace
 andeand query bank balances $ALICE_ADDR --node tcp://localhost:26657
 ```
 
+### 🚀 Cómo Interactuar con la Chain en Ejecución
+
+Una vez que la chain esté corriendo, puedes interactuar con ella de dos formas principales:
+
+#### Opción A: Desde Dentro del Contenedor Docker (Recomendado para Principiantes)
+1. **Abre una nueva terminal** (mientras la chain sigue corriendo en la primera).
+2. **Entra al contenedor:**
+   ```bash
+   docker exec -it andean-review bash
+   ```
+   Esto te lleva al interior del contenedor donde está corriendo la chain.
+
+3. **Ahora puedes ejecutar comandos directamente:**
+   ```bash
+   # Ver estado de la chain
+   andeand status --node tcp://localhost:26657
+
+   # Ver cuentas disponibles
+   andeand keys list --keyring-backend test --home /workspace/.andean
+
+   # Ver balance de una cuenta
+   andeand query bank balances [dirección-de-la-cuenta] --node tcp://localhost:26657
+   ```
+
+#### Opción B: Ejecutar Comandos desde Fuera del Contenedor
+Desde tu terminal normal (sin entrar al contenedor):
+```bash
+# Ver estado
+docker exec andean-review andeand status --node tcp://localhost:26657
+
+# Ver cuentas
+docker exec andean-review andeand keys list --keyring-backend test --home /workspace/.andean
+
+# Ver balance
+docker exec andean-review andeand query bank balances [dirección] --node tcp://localhost:26657
+```
+
+#### 📝 Guía Paso a Paso para tu Primera Transacción
+
+Vamos a hacer una transferencia simple de tokens:
+
+1. **Primero, verifica que tienes cuentas:**
+   ```bash
+   docker exec -it andean-review bash
+   andeand keys list --keyring-backend test --home /workspace/.andean
+   ```
+   Deberías ver una cuenta llamada "reviewer" (o "alice" si usas el script manual).
+
+2. **Obtén la dirección de la cuenta:**
+   ```bash
+   ALICE_ADDR=$(andeand keys show reviewer -a --keyring-backend test --home /workspace/.andean)
+   echo $ALICE_ADDR
+   ```
+   Esto te da la dirección de la cuenta (empieza con "andean...").
+
+3. **Verifica el balance inicial:**
+   ```bash
+   andeand query bank balances $ALICE_ADDR --node tcp://localhost:26657
+   ```
+   Deberías ver algo como `1000000000000aand` (1 billón de tokens "aand").
+
+4. **Crea una segunda cuenta para recibir tokens:**
+   ```bash
+   andeand keys add bob --keyring-backend test --home /workspace/.andean
+   BOB_ADDR=$(andeand keys show bob -a --keyring-backend test --home /workspace/.andean)
+   echo $BOB_ADDR
+   ```
+
+5. **Envía tokens de alice a bob:**
+   ```bash
+   andeand tx bank send reviewer $BOB_ADDR 1000000aand \
+     --chain-id andean-demo-1 \
+     --keyring-backend test \
+     --home /workspace/.andean \
+     --node tcp://localhost:26657 -y
+   ```
+   - `reviewer`: nombre de la cuenta que envía
+   - `$BOB_ADDR`: dirección del receptor
+   - `1000000aand`: cantidad a enviar (1 millón de tokens)
+   - Los otros flags son configuración técnica
+
+6. **Verifica que la transacción funcionó:**
+   ```bash
+   # Balance de alice (debería haber disminuido)
+   andeand query bank balances $ALICE_ADDR --node tcp://localhost:26657
+
+   # Balance de bob (debería tener los tokens)
+   andeand query bank balances $BOB_ADDR --node tcp://localhost:26657
+   ```
+
+7. **¡Felicitaciones!** Has completado tu primera transacción en Andean Chain.
+
+#### 🛑 Cómo Salir y Detener Todo
+- Para salir del contenedor: escribe `exit`
+- Para detener la chain: `docker stop andean-review && docker rm andean-review`
+- Para volver a empezar: ejecuta el script otra vez
+
 ## 🧪 Ejemplos Prácticos de Uso
 
 *Ejecuta en segunda terminal o contenedor.*
@@ -178,10 +275,91 @@ andeand tx itzel submit-price --asset BOB/USD --price 6.96 --from alice --keyrin
 - [Telegram](https://t.me/andean_chain)
 - [Forum](https://forum.andean.chain)
 
+## 🔧 Solución de Problemas
+
+### Instalación de andeand
+Si los comandos `andeand` no funcionan:
+
+1. **Dentro del contenedor Docker:**
+   ```bash
+   # El script ya instala andeand automáticamente
+   which andeand  # Debería mostrar /go/bin/andeand
+   ```
+
+2. **Fuera del contenedor (opcional):**
+   ```bash
+   # Instalar Go 1.19+
+   wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
+   sudo tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz
+   export PATH=$PATH:/usr/local/go/bin
+
+   # Clonar y compilar
+   git clone https://github.com/AndeanLabs/andean.git
+   cd andean
+   go install ./cmd/andeand
+
+   # Verificar
+   ~/go/bin/andeand version
+   ```
+
+### Problemas Comunes
+
+#### ❌ "Command not found" o "andeand: command not found"
+- **Solución:** Asegúrate de estar dentro del contenedor Docker con `docker exec -it andean-review bash`
+- **Verificación:** Ejecuta `which andeand` para ver si está instalado
+
+#### ❌ "Error: multiple main packages found"
+- **Causa:** Falta `config.yml` con `build.main`
+- **Solución:** El script crea `config.yml` automáticamente. Si usas manual, agrega:
+  ```yaml
+  version: 1
+  build:
+    main: cmd/andeand
+  ```
+
+#### ❌ "Container not running" o "No such container"
+- **Solución:** Verifica que el contenedor esté corriendo con `docker ps`
+- **Reinicio:** Detén con `docker stop andean-review` y ejecuta el script otra vez
+
+#### ❌ "Connection refused" o "dial tcp 127.0.0.1:26657"
+- **Causa:** La chain no está iniciada o el puerto está ocupado
+- **Solución:** Espera 10-15 segundos después de ejecutar el script, o verifica puertos libres
+
+#### ❌ "insufficient funds" en transacciones
+- **Causa:** La cuenta no tiene suficientes tokens
+- **Solución:** Verifica balance con `andeand query bank balances [dirección]`
+
+#### ❌ Errores de permisos Docker
+- **Solución (Linux/Mac):** `sudo usermod -aG docker $USER` y reinicia sesión
+- **Solución (Windows):** Ejecuta Docker Desktop como administrador
+
+### Verificación de Instalación
+```bash
+# Verificar Docker
+docker --version
+
+# Verificar que el contenedor corre
+docker ps | grep andean-review
+
+# Verificar andeand dentro del contenedor
+docker exec andean-review which andeand
+
+# Verificar chain corriendo
+docker exec andean-review andeand status --node tcp://localhost:26657
+```
+
+### Obtener Ayuda
+- **Discord:** https://discord.gg/andean-chain
+- **Issues en GitHub:** Reporta bugs en el repositorio
+- **Documentación:** Revisa `docs/` para guías avanzadas
+
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 
+---
+
+**Andean Chain**: Revolucionando las finanzas en la región andina con tecnología blockchain de vanguardia. 🌅🏔️
 ---
 
 **Andean Chain**: Revolucionando las finanzas en la región andina con tecnología blockchain de vanguardia. 🌅🏔️
