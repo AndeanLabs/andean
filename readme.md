@@ -1,10 +1,10 @@
 <!-- markdownlint-disable MD033 -->
 # Andean Chain 🏔️
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/andean-labs/andean)](https://pkg.go.dev/github.com/andean-labs/andean)
-[![Go Report Card](https://goreportcard.com/badge/github.com/andean-labs/andean)](https://goreportcard.com/report/github.com/andean-labs/andean)
-[![Version](https://img.shields.io/github/tag/andean-labs/andean.svg)](https://github.com/andean-labs/andean/releases/latest)
-[![License](https://img.shields.io/github/license/andean-labs/andean.svg)](https://github.com/andean-labs/andean/blob/main/LICENSE)
+[![GoDoc](https://pkg.go.dev/badge/github.com/AndeanLabs/andean)](https://pkg.go.dev/github.com/AndeanLabs/andean)
+[![Go Report Card](https://goreportcard.com/badge/github.com/AndeanLabs/andean)](https://goreportcard.com/report/github.com/AndeanLabs/andean)
+[![Version](https://img.shields.io/github/tag/AndeanLabs/andean.svg)](https://github.com/AndeanLabs/andean/releases/latest)
+[![License](https://img.shields.io/github/license/AndeanLabs/andean.svg)](https://github.com/AndeanLabs/andean/blob/main/LICENSE)
 [![Discord](https://img.shields.io/discord/1234567890)](https://discord.gg/andean-chain)
 
 > La primera blockchain nativa de Celestia para la región andina. Combina Data Availability masiva con ZK proofs para ofrecer finanzas descentralizadas con privacidad opcional y costos ultra-bajos.
@@ -67,7 +67,7 @@ Primero necesitas tener una instancia de Andean Chain corriendo. Elige una de es
 ```bash
 # 1. Clonar el repositorio (solo si no existe)
 if [ ! -d "andean" ]; then
-    git clone https://github.com/andean-labs/andean.git
+    git clone https://github.com/AndeanLabs/andean.git andean
 else
     echo "⚠️  Directorio 'andean' ya existe. Entrando al directorio existente..."
 fi
@@ -94,7 +94,7 @@ Si prefieres controlar cada paso y ver los logs en tiempo real:
 ```bash
 # 1. Clonar y construir (si no lo hiciste antes)
 if [ ! -d "andean" ]; then
-    git clone https://github.com/andean-labs/andean.git
+    git clone https://github.com/AndeanLabs/andean.git andean
 fi
 cd andean
 docker build -t andean-dev .
@@ -461,14 +461,23 @@ echo "🔍 Verificando setup de Andean Chain..."
 # Verificar que el contenedor está corriendo
 if ! docker ps | grep andean-dev-container > /dev/null; then
     echo "❌ El contenedor andean-dev-container no está corriendo"
+    echo "💡 Ejecuta primero el setup con: ./setup-reviewer.sh"
     exit 1
 fi
 
-# Verificar conectividad RPC
-if ! curl -s http://localhost:26657/status > /dev/null; then
-    echo "❌ RPC no responde en localhost:26657"
+# Verificar conectividad RPC (probar ambas opciones)
+echo "🌐 Verificando conectividad RPC..."
+if curl -s http://127.0.0.1:26657/status > /dev/null 2>&1; then
+    RPC_ENDPOINT="http://127.0.0.1:26657"
+elif curl -s http://localhost:26657/status > /dev/null 2>&1; then
+    RPC_ENDPOINT="http://localhost:26657"
+else
+    echo "❌ RPC no responde en ningún endpoint"
+    echo "💡 Verifica que la blockchain esté corriendo"
     exit 1
 fi
+
+echo "✅ RPC funcionando en: $RPC_ENDPOINT"
 
 # Verificar que andeand está instalado localmente
 if ! which andeand > /dev/null; then
@@ -478,12 +487,12 @@ if ! which andeand > /dev/null; then
 fi
 
 # Variables de entorno
-export RPC_ENDPOINT="http://localhost:26657"
 export CHAIN_ID="andean-test-1"
 
 # Verificar conexión del CLI
 if ! andeand status --node $RPC_ENDPOINT > /dev/null 2>&1; then
     echo "❌ CLI no puede conectar a la blockchain"
+    echo "💡 Verifica que la blockchain esté corriendo correctamente"
     exit 1
 fi
 
@@ -493,10 +502,21 @@ if ! andeand keys list --keyring-backend test | grep -q "mi-cuenta"; then
     echo "andeand keys add mi-cuenta --keyring-backend test"
 fi
 
+# Mostrar información del sistema
+echo ""
 echo "✅ ¡Todo está funcionando correctamente!"
-echo "🌐 RPC: http://localhost:26657"
-echo "🌐 API: http://localhost:1317"
-echo "⛓️  Chain ID: andean-test-1"
+echo "🌐 RPC: $RPC_ENDPOINT"
+echo "🌐 API: http://127.0.0.1:1317"
+echo "⛓️  Chain ID: $CHAIN_ID"
+echo ""
+echo "📊 Estado actual:"
+LATEST_BLOCK=$(curl -s $RPC_ENDPOINT/status | grep -o '"latest_block_height":"[^"]*"' | cut -d'"' -f4)
+echo "   Último bloque: #$LATEST_BLOCK"
+echo ""
+echo "🧪 Comandos útiles:"
+echo "   andeand keys list --keyring-backend test"
+echo "   andeand status --node $RPC_ENDPOINT"
+echo "   docker exec -it andean-dev-container bash"
 ```
 
 ## 📡 APIs y Endpoints
