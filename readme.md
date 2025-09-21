@@ -9,17 +9,6 @@
 
 ⚠️ **VERSIÓN DE DESARROLLO**: Esta implementación es solo para testing local. No se recomienda para uso en producción.
 
-## 📋 Tabla de Contenidos
-
-- [🌟 Módulos Experimentales](#-módulos-experimentales)
-- [📊 Rendimiento Local](#-rendimiento-local)
-- [🚀 Instalación y Configuración](#-instalación-y-configuración)
-- [🎮 Guía de Interacción](#-guía-de-interacción)
-- [🧪 Ejemplos Avanzados](#-ejemplos-avanzados)
-- [📡 APIs y Monitoreo](#-apis-y-monitoreo)
-- [🔧 Troubleshooting](#-troubleshooting)
-
----
 
 ## 🌟 Módulos Experimentales
 
