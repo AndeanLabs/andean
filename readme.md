@@ -65,124 +65,16 @@
 - Git
 - Puertos 1317, 26656, 26657 libres
 
-### Opción 1: Script Automático Mejorado (Recomendado)
-Crea el archivo `setup-reviewer-local.sh` en la raíz del proyecto con el contenido a continuación, luego ejecútalo.
+### Opción 1: Script Automático (Recomendado para Revisores)
 
 ```bash
-#!/bin/bash
-
-# setup-reviewer-local.sh - Setup completo para pruebas locales de Andean Chain
-
-set -e
-
-echo "🚀 Configurando Andean Chain para pruebas locales..."
-
-# Verificaciones
-command -v docker >/dev/null 2>&1 || { echo "❌ Docker no instalado."; exit 1; }
-command -v git >/dev/null 2>&1 || { echo "❌ Git no instalado."; exit 1; }
-
-cd andean
-
-echo "🏗️  Construyendo imagen Docker..."
-docker build -t andean-review . > /dev/null
-
-CONTAINER_NAME="andean-review"
-docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
-docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
-
-docker run -d --name "$CONTAINER_NAME" \
-    -v $(pwd):/workspace \
-    -p 1317:1317 \
-    -p 26657:26657 \
-    andean-review sleep infinity > /dev/null
-
-sleep 5
-if ! docker ps | grep -q "$CONTAINER_NAME"; then
-    echo "❌ Contenedor no corriendo."
-    exit 1
-fi
-
-echo "✅ Contenedor listo."
-
-exec_in_container() {
-    docker exec "$CONTAINER_NAME" bash -c "$1"
-}
-
-exec_in_container "go install ./cmd/andeand"
-exec_in_container "andeand init reviewer-demo --chain-id andean-demo-1 --home /workspace/.andean"
-exec_in_container "andeand keys add reviewer --keyring-backend test --home /workspace/.andean"
-exec_in_container "andeand genesis add-genesis-account reviewer 1000000000000aand --keyring-backend test --home /workspace/.andean"
-exec_in_container "andeand genesis gentx reviewer 1000000000aand --chain-id andean-demo-1 --keyring-backend test --home /workspace/.andean"
-exec_in_container "andeand genesis collect-gentxs --home /workspace/.andean"
-
-echo "🔥 Iniciando cadena..."
-docker exec -d "$CONTAINER_NAME" bash -c "andeand start --home /workspace/.andean --minimum-gas-prices 0stake"
-
-sleep 10
-
-if exec_in_container "andeand status --node tcp://localhost:26657" >/dev/null 2>&1; then
-    REVIEWER_ADDR=$(exec_in_container "andeand keys show reviewer -a --keyring-backend test --home /workspace/.andean")
-    echo "✅ ¡Setup completo!"
-    echo "Dirección: $REVIEWER_ADDR"
-    echo "RPC: http://localhost:26657"
-    echo "🧪 Prueba: docker exec -it $CONTAINER_NAME andeand status --node tcp://localhost:26657"
-    echo "🛑 Detener: docker stop $CONTAINER_NAME && docker rm $CONTAINER_NAME"
-else
-    echo "❌ Error iniciando cadena."
-    exit 1
-fi
-
-trap "docker stop $CONTAINER_NAME && docker rm $CONTAINER_NAME" EXIT
-echo "Presiona Ctrl+C para salir."
-while true; do sleep 1; done
-```
-
-Ejecuta los comandos siguientes para iniciar:
-
-```bash
-# Clonar el repositorio
+# Clonar el repositorio (si no lo has hecho)
 git clone https://github.com/AndeanLabs/andean.git
 cd andean
 
-# Crear config.yml con build.main
-cat > config.yml << 'EOF'
-version: 1
-build:
-  main: cmd/andeand
-accounts:
-- name: alice
-  coins: [200000000uandean]
-- name: bob
-  coins: [100000000uandean]
-faucet:
-  name: bob
-  coins: [100000uandean]
-validators:
-- name: alice
-  bonded: 100000000uandean
-genesis:
-  chain_id: andean-test-1
-  app_state:
-    staking:
-      params:
-        bond_denom: uandean
-    mint:
-      params:
-        mint_denom: uandean
-    crisis:
-      constant_fee:
-        denom: uandean
-    gov:
-      params:
-        min_deposit:
-        - denom: uandean
-          amount: '10000000'
-        voting_period: 120s
-EOF
-
-# Ejecutar script mejorado
-chmod +x setup-reviewer-local.sh
-./setup-reviewer-local.sh
+# Dar permisos y ejecutar el script (crea config.yml automáticamente)
+chmod +x setup-reviewer.sh
+./setup-reviewer.sh
 ```
 
 ### Opción 2: Manual con Ignite CLI (Sin Docker)
@@ -293,6 +185,3 @@ Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 ---
 
 **Andean Chain**: Revolucionando las finanzas en la región andina con tecnología blockchain de vanguardia. 🌅🏔️
-
-### Script setup-reviewer-local.sh (Adjunto)
-Crea este archivo en `andean
