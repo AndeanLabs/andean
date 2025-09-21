@@ -1,3 +1,4 @@
+```markdown
 <!-- markdownlint-disable MD033 -->
 # Andean Chain 🏔️
 
@@ -60,33 +61,88 @@
 
 ## 🚀 Inicio Rápido - Prueba la Tecnología
 
-### Opción 1: Script Automático (Recomendado para Revisores)
+### Prerrequisitos
+- Docker (versión 20.10+)
+- Git
+- Puertos 1317, 26656, 26657 libres
+
+### Opción 1: Script Automático Mejorado (Recomendado)
+Descarga el script `setup-reviewer-local.sh` (completo al final) y ejecútalo para setup automático.
 
 ```bash
-# Clonar el repositorio (si no lo has hecho)
+# Clonar el repositorio
 git clone https://github.com/AndeanLabs/andean.git
 cd andean
 
-# Dar permisos y ejecutar el script
-chmod +x setup-reviewer.sh
-./setup-reviewer.sh
+# Crear config.yml con build.main
+cat > config.yml << 'EOF'
+version: 1
+build:
+  main: cmd/andeand
+accounts:
+- name: alice
+  coins: [200000000uandean]
+- name: bob
+  coins: [100000000uandean]
+faucet:
+  name: bob
+  coins: [100000uandean]
+validators:
+- name: alice
+  bonded: 100000000uandean
+genesis:
+  chain_id: andean-test-1
+  app_state:
+    staking:
+      params:
+        bond_denom: uandean
+    mint:
+      params:
+        mint_denom: uandean
+    crisis:
+      constant_fee:
+        denom: uandean
+    gov:
+      params:
+        min_deposit:
+        - denom: uandean
+          amount: '10000000'
+        voting_period: 120s
+EOF
+
+# Ejecutar script mejorado
+chmod +x setup-reviewer-local.sh
+./setup-reviewer-local.sh
 ```
 
-### Opción 2: Manual con Docker
+### Opción 2: Manual con Ignite CLI (Sin Docker)
+Para desarrollo directo.
 
 ```bash
-# 1. Construir la imagen
+# Clonar y configurar config.yml como arriba
+git clone https://github.com/AndeanLabs/andean.git
+cd andean
+# [Crear config.yml como en Opción 1]
+
+# Iniciar con recarga automática
+ignite chain serve --reset-once
+```
+
+### Opción 3: Manual con Docker (Avanzado)
+Para control total.
+
+```bash
+# Construir imagen
 docker build -t andean-dev .
 
-# 2. Iniciar un contenedor interactivo
+# Iniciar contenedor con montaje
 docker run -it --rm \
   -v $(pwd):/workspace \
   -p 1317:1317 -p 26656:26656 -p 26657:26657 \
   --name andean-dev-container \
   andean-dev
 
-# 3. Dentro del contenedor, inicializar la cadena
-
+# Dentro del contenedor
 go install ./cmd/andeand
 andeand init test-chain --chain-id andean-test-1 --home /workspace/.andean
 andeand keys add alice --keyring-backend test --home /workspace/.andean
@@ -94,97 +150,53 @@ andeand genesis add-genesis-account alice 1000000000000aand --keyring-backend te
 andeand genesis gentx alice 1000000000aand --chain-id andean-test-1 --keyring-backend test --home /workspace/.andean
 andeand genesis collect-gentxs --home /workspace/.andean
 andeand start --home /workspace/.andean --minimum-gas-prices 0stake
+```
 
+### Verificación Inicial
+Después de iniciar, verifica en segunda terminal:
+```bash
+# Estado del nodo
+andeand status --node tcp://localhost:26657
 
-ignite chain serve --reset-once
-
+# Balance de alice
+ALICE_ADDR=$(andeand keys show alice -a --keyring-backend test --home /workspace/.andean)
+andeand query bank balances $ALICE_ADDR --node tcp://localhost:26657
 ```
 
 ## 🧪 Ejemplos Prácticos de Uso
 
-*Para ejecutar estos ejemplos, primero inicia la cadena con una de las opciones anteriores. Luego, abre una **segunda terminal** y entra al contenedor con `docker exec -it andean-dev-container /bin/bash`.*
+*Ejecuta en segunda terminal o contenedor.*
 
 ### 1. Transferencias Básicas
 
 ```bash
-# Dirección del usuario 'alice'
 ALICE_ADDR=$(andeand keys show alice -a --keyring-backend test --home /workspace/.andean)
-
-# Crear un nuevo usuario 'bob'
 andeand keys add bob --keyring-backend test --home /workspace/.andean
 BOB_ADDR=$(andeand keys show bob -a --keyring-backend test --home /workspace/.andean)
-
-# Verificar balance de alice
-andeand query bank balances $ALICE_ADDR --home /workspace/.andean --node tcp://localhost:26657
-
-# Transferir 1000aand de alice a bob
-andeand tx bank send alice $BOB_ADDR 1000aand \
-  --chain-id andean-test-1 \
-  --keyring-backend test \
-  --home /workspace/.andean \
-  --node tcp://localhost:26657 -y
-
-# Verificar el nuevo balance de bob
-andeand query bank balances $BOB_ADDR --home /workspace/.andean --node tcp://localhost:26657
+andeand query bank balances $ALICE_ADDR --node tcp://localhost:26657
+andeand tx bank send alice $BOB_ADDR 1000aand --chain-id andean-test-1 --keyring-backend test --home /workspace/.andean --node tcp://localhost:26657 -y
+andeand query bank balances $BOB_ADDR --node tcp://localhost:26657
 ```
 
 ### 2. AndeanSwap AMM (Módulo: xicoatl)
 
 ```bash
-# Crear un pool de aBOB y aUSD
-andeand tx xicoatl create-pool \
-  --token-a aBOB \
-  --token-b aUSD \
-  --fee 0.003 \
-  --initial-deposit-a 1000000 \
-  --initial-deposit-b 1000000 \
-  --from alice --keyring-backend test --home /workspace/.andean \
-  --chain-id andean-test-1 --node tcp://localhost:26657 -y
-
-# Agregar más liquidez al pool #1
-andeand tx xicoatl join-pool \
-  --pool-id 1 \
-  --tokens-in "1000000aBOB,1000000aUSD" \
-  --from alice --keyring-backend test --home /workspace/.andean \
-  --chain-id andean-test-1 --node tcp://localhost:26657 -y
-
-# Intercambiar 100 aBOB por aUSD
-andeand tx xicoatl swap \
-  --pool-id 1 \
-  --token-in aBOB \
-  --token-out aUSD \
-  --amount-in 100 \
-  --min-out 98 \
-  --from alice --keyring-backend test --home /workspace/.andean \
-  --chain-id andean-test-1 --node tcp://localhost:26657 -y
+andeand tx xicoatl create-pool --token-a aBOB --token-b aUSD --fee 0.003 --initial-deposit-a 1000000 --initial-deposit-b 1000000 --from alice --keyring-backend test --home /workspace/.andean --chain-id andean-test-1 --node tcp://localhost:26657 -y
+andeand tx xicoatl join-pool --pool-id 1 --tokens-in "1000000aBOB,1000000aUSD" --from alice --keyring-backend test --home /workspace/.andean --chain-id andean-test-1 --node tcp://localhost:26657 -y
+andeand tx xicoatl swap --pool-id 1 --token-in aBOB --token-out aUSD --amount-in 100 --min-out 98 --from alice --keyring-backend test --home /workspace/.andean --chain-id andean-test-1 --node tcp://localhost:26657 -y
 ```
 
 ### 3. Cross-Chain Bridges (Módulo: inti)
 
 ```bash
-# Simular un bridge desde Ethereum a Andean Chain
-andeand tx inti initiate-bridge \
-  --source-chain ethereum \
-  --target-chain andean \
-  --asset USDC \
-  --amount 1000000 \
-  --recipient $(andeand keys show alice -a --keyring-backend test --home /workspace/.andean) \
-  --from alice --keyring-backend test --home /workspace/.andean \
-  --chain-id andean-test-1 --node tcp://localhost:26657 -y
+andeand tx inti initiate-bridge --source-chain ethereum --target-chain andean --asset USDC --amount 1000000 --recipient $ALICE_ADDR --from alice --keyring-backend test --home /workspace/.andean --chain-id andean-test-1 --node tcp://localhost:26657 -y
 ```
 
 ### 4. Oracle Price Feeds (Módulo: itzel)
 
 ```bash
-# Consultar el precio agregado de un par
 andeand query itzel aggregated-price BOB/USD --node tcp://localhost:26657
-
-# Simular un oráculo enviando un precio
-andeand tx itzel submit-price \
-  --asset BOB/USD \
-  --price 6.96 \
-  --from alice --keyring-backend test --home /workspace/.andean \
-  --chain-id andean-test-1 --node tcp://localhost:26657 -y
+andeand tx itzel submit-price --asset BOB/USD --price 6.96 --from alice --keyring-backend test --home /workspace/.andean --chain-id andean-test-1 --node tcp://localhost:26657 -y
 ```
 
 ## 🤝 Contribuir
@@ -211,3 +223,8 @@ Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 ---
 
 **Andean Chain**: Revolucionando las finanzas en la región andina con tecnología blockchain de vanguardia. 🌅🏔️
+
+---
+
+### Script setup-reviewer-local.sh (Adjunto)
+Crea este archivo en `andean
