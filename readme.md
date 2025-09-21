@@ -64,7 +64,7 @@
 
 ```bash
 # Clonar el repositorio (si no lo has hecho)
-git clone https://github.com/andean-labs/andean.git
+git clone https://github.com/AndeanLabs/andean.git
 cd andean
 
 # Dar permisos y ejecutar el script
@@ -86,7 +86,7 @@ docker run -it --rm \
   andean-dev
 
 # 3. Dentro del contenedor, inicializar la cadena
-# (los comandos están corregidos con lo que aprendimos)
+
 go install ./cmd/andeand
 andeand init test-chain --chain-id andean-test-1 --home /workspace/.andean
 andeand keys add alice --keyring-backend test --home /workspace/.andean
