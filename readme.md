@@ -94,6 +94,10 @@ andeand genesis add-genesis-account alice 1000000000000aand --keyring-backend te
 andeand genesis gentx alice 1000000000aand --chain-id andean-test-1 --keyring-backend test --home /workspace/.andean
 andeand genesis collect-gentxs --home /workspace/.andean
 andeand start --home /workspace/.andean --minimum-gas-prices 0stake
+
+
+ignite chain serve --reset-once
+
 ```
 
 ## 🧪 Ejemplos Prácticos de Uso
