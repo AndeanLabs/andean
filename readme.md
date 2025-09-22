@@ -770,6 +770,42 @@ Antes de reportar un issue, por favor:
 - 📱 [Telegram](https://t.me/andean_chain) - Comunidad hispanohablante
 - 🗣️ [Forum](https://forum.andean-chain.org) - Discusiones técnicas
 - 📧 [Email](mailto:hello@andean-chain.org) - Contacto directo
+- 
+
+
+Proyecto: Andean Labs
+Solicitud de Apoyo para Escalar
+Objetivo General: Escalar la infraestructura, herramientas y comunidad de la red Andean Chain sobre Celestia, aprovechando la testnet Mocha o Arabica y la futura red principal.
+Lo más Importante: Acceder al Celestia Foundation Delegation Program
+Nuestra prioridad es ser incluidos en el Celestia Foundation Delegation Program, ya que buscamos una colaboración estrecha y activa con la red.
+Infraestructura de Nodos y Servidores
+Objetivo: Mantener nodos de prueba y producción robustos, confiables y seguros.
+Pedidos específicos:
+Soporte económico o servidores para lanzar y mantener nuestro propios nodos
+Acceso a tutoría inicial para comenzar con las mejores prácticas, acceso a templates o plantillas base para rollups.
+Soporte económico o servidores con mayor capacidad de disco para nodos archivales (no-pruned) .
+Explicación adicional: Esto nos permitirá almacenar todo el historial de la blockchain para ser parte de Celestia y para correr nuestros propios nodos, fomentando la descentralización. Ya que seremos una chain permanente y lo más nativa posible de Celestia, queremos ser parte de la red y su seguridad.
+Soporte para Desarrolladores y Proyectos
+Objetivo: Fomentar el uso de la testnet y la construcción sobre Celestia.
+Pedidos específicos:
+Recompensas en TIA por utilizar la testnet Mocha y ejecutar transacciones.
+Incentivos para quienes construyan aplicaciones o módulos sobre la red Andean Chain.
+Acceso a documentación y a una IA especializada en Celestia y CosmosSDK con ejemplos y guías prácticas para integrar proyectos.
+Seguridad y Resiliencia
+Objetivo: Minimizar riesgos y proteger la red.
+Pedidos específicos:
+Herramientas para gestión de claves privadas y firmas distribuidas para validar sin riesgo de slashing,  (por ejemplo, Horcrux).
+Asesoría sobre mejores prácticas de respaldo de nodos y recuperación ante fallos.
+Monitoreo avanzado para detectar y prevenir ataques o irregularidades en tiempo real.
+Asistencia para configurar Prometheus + Grafana para monitoreo de nodos.
+Comunidad y Visibilidad
+Objetivo: Aumentar la participación y colaboración de desarrolladores.
+Pedidos específicos:
+Inclusión del proyecto en los canales oficiales de Celestia para difusión de la testnet.
+Soporte en el reclutamiento de desarrolladores y validadores interesados en la red.
+Asesoría para estructurar un programa de incentivos para la comunidad.
+
+
 
 
 ## 📄 Licencia
